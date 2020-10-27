@@ -9,8 +9,7 @@ QSharedPointer<QVector<int>> randomPermutation(const int n)
 {
     static std::mt19937 randomGenerator;
 
-    auto result = QSharedPointer<QVector<int>>::create();
-    result->resize(n);
+    auto result = QSharedPointer<QVector<int>>::create(n);
 
     QSet<int> usedElements;
 
@@ -34,85 +33,70 @@ using Matrix = QVector<QVector<int>>;
 
 QPair<QSharedPointer<Matrix>, QSharedPointer<Matrix>> qapReadFile(QString filename)
 {
-    auto A = QSharedPointer<Matrix>::create();
-    auto B = QSharedPointer<Matrix>::create();
-
     QFile file(filename);
+
+    QSharedPointer<Matrix> A, B;
 
     if(!file.open(QIODevice::ReadOnly))
     {
         qFatal("%s", QString("File " + filename + " open error!").toStdString().c_str());
     }
-    else
+
+    QTextStream input(&file);
+
+    bool ok;
+    const int size = input.readLine().toInt(&ok);
+
+    if(!ok)
     {
-        QTextStream input(&file);
+        qFatal("Cannot cast size to int!");
+    }
 
-        bool ok;
-        const int size = input.readLine().toInt(&ok);
+    A = QSharedPointer<Matrix>::create(size, QVector<int>(size));
+    B = QSharedPointer<Matrix>::create(size, QVector<int>(size));
+    qDebug() << "Size is " + QString::number(size);
 
-        if(ok)
+    input.readLine(); // empty line
+    qDebug() << "Reading first matrix...";
+
+    for(int i=0;i<size;i++)
+    {
+        QStringList words = input.readLine().split(" ");
+
+        for(int j=0;j<size;j++)
         {
-            A->resize(size);
-            for(int i=0;i<size;i++)
-                (*A)[i].resize(size);
+            auto& word = words[j];
+            bool ok;
+            auto wordAsInt = word.toInt(&ok);
 
-            B->resize(size);
-            for(int i=0;i<size;i++)
-                (*B)[i].resize(size);
-
-            qDebug() << "Size is " + QString::number(size);
-        }
-        else
-        {
-            qFatal("Cannot cast size to int!");
-        }
-
-        input.readLine(); // empty line
-        qDebug() << "Reading first matrix...";
-
-        for(int i=0;i<size;i++)
-        {
-            QStringList words = input.readLine().split(" ");
-
-            for(int j=0;j<size;j++)
+            if(!ok)
             {
-                auto& word = words[j];
-                bool ok;
-                auto wordAsInt = word.toInt(&ok);
-
-                if(ok)
-                {
-                    (*A)[i][j] = wordAsInt;
-                }
-                else
-                {
-                    qFatal("%s", QString("Cannot cast word '%0' [ %1 %2 ] into int!").arg(word).arg(i).arg(j).toStdString().c_str());
-                }
+                qFatal("%s", QString("Cannot cast word '%0' [ %1 %2 ] into int!").arg(word).arg(i).arg(j).toStdString().c_str());
             }
+
+            (*A)[i][j] = wordAsInt;
         }
+    }
 
-        input.readLine(); // empty line
-        qDebug() << "Reading second matrix...";
+    input.readLine(); // empty line
+    qDebug() << "Reading second matrix...";
 
-        for(int i=0;i<size;i++)
+    for(int i=0;i<size;i++)
+    {
+        QStringList words = input.readLine().split(" ", QString::SkipEmptyParts);
+
+        for(int j=0;j<size;j++)
         {
-            QStringList words = input.readLine().split(" ", QString::SkipEmptyParts);
+            auto& word = words[j];
+            bool ok;
+            auto wordAsInt = word.toInt(&ok);
 
-            for(int j=0;j<size;j++)
+            if(!ok)
             {
-                auto& word = words[j];
-                bool ok;
-                auto wordAsInt = word.toInt(&ok);
-
-                if(ok)
-                {
-                    (*B)[i][j] = wordAsInt;
-                }
-                else
-                {
-                     qFatal("%s", QString("Cannot cast word '%0' [ %1 %2 ] into int!").arg(word).arg(i).arg(j).toStdString().c_str());
-                }
+                 qFatal("%s", QString("Cannot cast word '%0' [ %1 %2 ] into int!").arg(word).arg(i).arg(j).toStdString().c_str());
             }
+
+            (*B)[i][j] = wordAsInt;
         }
     }
 
