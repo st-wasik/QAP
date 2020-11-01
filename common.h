@@ -7,4 +7,6 @@
 
 using Matrix = QVector<QVector<int>>;
 
+QSharedPointer<QVector<int>> randomPermutation(const int n);
+
 #endif // COMMON_H

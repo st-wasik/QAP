@@ -9,17 +9,17 @@
 class LocalSearch
 {
 public:
-    LocalSearch(QString filename);
+    LocalSearch(QSharedPointer<const Input> inputData);
     void run(bool greedy = true);
 
     Input input;
-    QSharedPointer<QVector<int>> randomPermutation(const int n);
 
 private:
     Cost cost();
     void swap(QVector<int> &solution, int i, int j);
 
     QSharedPointer<QVector<int>> _solution;
+    QSharedPointer<const Input> _inputData;
 };
 
 #endif // LOCALSEARCH_H

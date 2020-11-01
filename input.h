@@ -7,17 +7,15 @@
 class Input
 {
 public:
-    Input(QString filename);
-    QPair<QSharedPointer<Matrix>, QSharedPointer<Matrix>> input;
+    Input();
+
     QSharedPointer<Matrix> distances, interactions;
-    QString getFilename() const;
+
     int getDimension() const;
 
+    void readFromFile(QString filename);
 private:
-    QString _filename;
     int _dim;
-
-    QPair<QSharedPointer<Matrix>, QSharedPointer<Matrix>> qapReadFile(QString filename);
 };
 
 #endif // INPUT_H

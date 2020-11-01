@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     two_opt.cpp \
     input.cpp \
     cost.cpp \
-    localsearch.cpp
+    localsearch.cpp \
+    common.cpp
 
 HEADERS += \
     two_opt.h \

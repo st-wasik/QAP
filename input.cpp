@@ -1,14 +1,10 @@
 #include "input.h"
 
-Input::Input(QString filename)
+Input::Input()
 {
-    input = qapReadFile(filename);
-    distances = input.first;
-    interactions = input.second;
-    _filename = filename;
 }
 
-QPair<QSharedPointer<Matrix>, QSharedPointer<Matrix>> Input::qapReadFile(QString filename)
+void Input::readFromFile(QString filename)
 {
     QFile file(filename);
 
@@ -79,8 +75,8 @@ QPair<QSharedPointer<Matrix>, QSharedPointer<Matrix>> Input::qapReadFile(QString
         }
     }
 
-    return {A, B};
+    distances = A;
+    interactions = B;
 }
 
-QString Input::getFilename() const {return _filename;}
 int Input::getDimension() const {return _dim;}

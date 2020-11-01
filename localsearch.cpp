@@ -1,38 +1,14 @@
 #include "localsearch.h"
 
-LocalSearch::LocalSearch(QString filename)
+LocalSearch::LocalSearch(QSharedPointer<const Input> inputData)
 {
-    input = Input(filename);
-    _solution = randomPermutation(input.getDimension());
-}
-
-QSharedPointer<QVector<int>>  LocalSearch::randomPermutation(const int n)
-{
-    static std::mt19937 randomGenerator;
-
-    auto result = QSharedPointer<QVector<int>>::create(n);
-
-    QSet<int> usedElements;
-
-    int randomValue;
-    for(int i=0; i<n; ++i)
-    {
-        do
-        {
-            randomValue = std::abs(static_cast<int>(randomGenerator())) % n + 1;
-        }
-        while(usedElements.contains(randomValue));
-
-        usedElements.insert(randomValue);
-        (*result)[i] = randomValue;
-    }
-
-    return result;
+    _inputData = inputData;
+    _solution  = randomPermutation(input.getDimension());
 }
 
 void LocalSearch::run(bool greedy)
 {
-    Cost cost(input);
+    Cost cost(_inputData);
     cost.calculateCost(*_solution);
 
     bool improvement = true;
@@ -43,13 +19,13 @@ void LocalSearch::run(bool greedy)
         // Jeśli neighbour jest lepszy to _solution = neighbour
         // Jeśli żaden neighbour nie był lepszy improvment = false
 
+
+        // remove this
+        break;
     }
 }
 
 void LocalSearch::swap(QVector<int> &solution, int i, int j)
 {
-    int temp;
-    temp = solution[i];
-    solution[i] = solution[j];
-    solution[j] = temp;
+    std::swap(solution[i], solution[j]);
 }

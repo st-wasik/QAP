@@ -20,7 +20,7 @@ QVector<int> Two_OPT::next()
     if (j == _dim)
         j = ++i + 1;
 
-    if (i == _dim - 1) ... // fuck this
+    if (i == _dim - 1) {} // ... // fuck this
 
     return swap(i, j++);
 }

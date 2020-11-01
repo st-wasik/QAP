@@ -5,54 +5,63 @@
 
 #include "two_opt.h"
 #include "input.h"
+#include "localsearch.h"
 
-QSharedPointer<QVector<int>> randomPermutation(const int n)
+void costTest(QSharedPointer<const Input> inputData)
 {
-    static std::mt19937 randomGenerator;
+    Cost costA(inputData);
+    Cost costB(inputData);
 
-    auto result = QSharedPointer<QVector<int>>::create(n);
+    QVector<int> solution;
+    solution.resize(26);
+    for(int i=0;i<26;++i) solution[i] = i;
 
-    QSet<int> usedElements;
+    costA.calculateCost(solution);
+    costB.calculateCost(solution);
 
-    int randomValue;
-    for(int i=0; i<n; ++i)
+    srand(static_cast<quint32>(time(nullptr)));
+    int X=0;
+    long long A=0, B=0;
+
+    QElapsedTimer t;
+    constexpr auto testsCount = 10000;
+
+    for(int i = 0; i < testsCount; ++i)
     {
-        do
-        {
-            randomValue = std::abs(static_cast<int>(randomGenerator())) % n + 1;
-        }
-        while(usedElements.contains(randomValue));
+        int a = rand() % 26, b = rand() % 26;
+        std::swap(solution[a], solution[b]);
 
-        usedElements.insert(randomValue);
-        (*result)[i] = randomValue;
+        t.start();
+        costA.calculateCost(solution);
+        A += t.nsecsElapsed();
+
+        t.start();
+        costB.updateCost(solution, a, b);
+        B += t.nsecsElapsed();
+
+        X += costA.getCost() == costB.getCost();
     }
 
-    return result;
+    qDebug() << "calculate cost time " + QString::number(A / 1000000) + " msec";
+    qDebug() << "update cost time " + QString::number(B / 1000000) + " msec";
+    qDebug() << "passed tests " + QString::number(X) + "/" + QString::number(testsCount);
 }
-
 
 int main()
 {
-//    auto X = qapReadFile("data/bur26f.dat");
-    Input X("data/bur26f.dat");
+    auto inputData = QSharedPointer<Input>::create();
+    inputData->readFromFile("data/bur26f.dat");
 
-    auto fst = X.input.first;
-    auto snd = X.input.second;
+    costTest(inputData);
 
-//    qDebug() << "Test";
-//    Two_OPT test(X);
-//    test.run();
-//    qDebug() << test.getSolution();
+//    LocalSearch localSearch(inputData);
+//    QElapsedTimer elapsedTimer;
 
-    for(int i=0;i<20; i++)
-    {
-        QElapsedTimer elapsedTimer;
-        elapsedTimer.start();
-        auto result = randomPermutation(25);
+//    elapsedTimer.start();
+//    localSearch.run();
 
-        qDebug() << "Elapsed time: " + QString::number(elapsedTimer.nsecsElapsed()) + " nsec";
-        qDebug() << *result;
-    }
+//    qDebug() << "Elapsed time: " + QString::number(elapsedTimer.nsecsElapsed()) + " nsec";
+//    qDebug() << "Elapsed time: " + QString::number(elapsedTimer.elapsed()) + " msec";
 
     return 0;
 }
