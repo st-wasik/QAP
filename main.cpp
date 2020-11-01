@@ -1,9 +1,10 @@
 #include <random>
-#include <QDebug>
-#include <Qt>
-#include <algorithm>
+#include "common.h"
 #include <QElapsedTimer>
 #include <QFile>
+
+#include "two_opt.h"
+#include "input.h"
 
 QSharedPointer<QVector<int>> randomPermutation(const int n)
 {
@@ -29,86 +30,19 @@ QSharedPointer<QVector<int>> randomPermutation(const int n)
     return result;
 }
 
-using Matrix = QVector<QVector<int>>;
-
-QPair<QSharedPointer<Matrix>, QSharedPointer<Matrix>> qapReadFile(QString filename)
-{
-    QFile file(filename);
-
-    QSharedPointer<Matrix> A, B;
-
-    if(!file.open(QIODevice::ReadOnly))
-    {
-        qFatal("%s", QString("File " + filename + " open error!").toStdString().c_str());
-    }
-
-    QTextStream input(&file);
-
-    bool ok;
-    const int size = input.readLine().toInt(&ok);
-
-    if(!ok)
-    {
-        qFatal("Cannot cast size to int!");
-    }
-
-    A = QSharedPointer<Matrix>::create(size, QVector<int>(size));
-    B = QSharedPointer<Matrix>::create(size, QVector<int>(size));
-    qDebug() << "Size is " + QString::number(size);
-
-    input.readLine(); // empty line
-    qDebug() << "Reading first matrix...";
-
-    for(int i=0;i<size;i++)
-    {
-        QStringList words = input.readLine().split(" ");
-
-        for(int j=0;j<size;j++)
-        {
-            auto& word = words[j];
-            bool ok;
-            auto wordAsInt = word.toInt(&ok);
-
-            if(!ok)
-            {
-                qFatal("%s", QString("Cannot cast word '%0' [ %1 %2 ] into int!").arg(word).arg(i).arg(j).toStdString().c_str());
-            }
-
-            (*A)[i][j] = wordAsInt;
-        }
-    }
-
-    input.readLine(); // empty line
-    qDebug() << "Reading second matrix...";
-
-    for(int i=0;i<size;i++)
-    {
-        QStringList words = input.readLine().split(" ", QString::SkipEmptyParts);
-
-        for(int j=0;j<size;j++)
-        {
-            auto& word = words[j];
-            bool ok;
-            auto wordAsInt = word.toInt(&ok);
-
-            if(!ok)
-            {
-                 qFatal("%s", QString("Cannot cast word '%0' [ %1 %2 ] into int!").arg(word).arg(i).arg(j).toStdString().c_str());
-            }
-
-            (*B)[i][j] = wordAsInt;
-        }
-    }
-
-    return {A,B};
-}
 
 int main()
 {
-    auto X = qapReadFile("data/bur26f.dat");
+//    auto X = qapReadFile("data/bur26f.dat");
+    Input X("data/bur26f.dat");
 
-    auto fst = X.first;
-    auto snd = X.second;
+    auto fst = X.input.first;
+    auto snd = X.input.second;
+
+//    qDebug() << "Test";
+//    Two_OPT test(X);
+//    test.run();
+//    qDebug() << test.getSolution();
 
     for(int i=0;i<20; i++)
     {
