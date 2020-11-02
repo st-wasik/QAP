@@ -5,16 +5,16 @@
 
 #include "two_opt.h"
 #include "input.h"
-#include "localsearch.h"
+#include "greedy.h"
 
 void costTest(QSharedPointer<const Input> inputData)
 {
     Cost costA(inputData);
     Cost costB(inputData);
 
-    QVector<int> solution;
-    solution.resize(26);
-    for(int i=0;i<26;++i) solution[i] = i;
+    auto solution = QSharedPointer<QVector<int>>::create();
+    solution->resize(inputData->getDimension());
+    for(int i=0;i<inputData->getDimension();++i) (*solution)[i] = i;
 
     costA.calculateCost(solution);
     costB.calculateCost(solution);
@@ -24,19 +24,19 @@ void costTest(QSharedPointer<const Input> inputData)
     long long A=0, B=0;
 
     QElapsedTimer t;
-    constexpr auto testsCount = 10000;
+    constexpr auto testsCount = 15000;
 
     for(int i = 0; i < testsCount; ++i)
     {
-        int a = rand() % 26, b = rand() % 26;
-        std::swap(solution[a], solution[b]);
+        int a = rand() % inputData->getDimension(), b = rand() % inputData->getDimension();
+        std::swap((*solution)[a], (*solution)[b]);
 
         t.start();
         costA.calculateCost(solution);
         A += t.nsecsElapsed();
 
         t.start();
-        costB.updateCost(solution, a, b);
+        costB.setCost(costB.getUpdatedCost(solution, a, b));
         B += t.nsecsElapsed();
 
         X += costA.getCost() == costB.getCost();
@@ -47,21 +47,62 @@ void costTest(QSharedPointer<const Input> inputData)
     qDebug() << "passed tests " + QString::number(X) + "/" + QString::number(testsCount);
 }
 
+void twoOptTest()
+{
+    auto perm = QSharedPointer<QVector<int>>::create(QVector<int>{1,2,3});
+    Two_OPT opt(3, perm);
+
+    QSharedPointer<QVector<int>> next;
+    while( (next = opt.next()) != nullptr )
+    {
+        qDebug() << *next;
+    }
+}
+
+void greedyTest(QSharedPointer<const Input> inputData)
+{
+    srand(static_cast<quint32>(time(nullptr)));
+
+    constexpr auto steps = 125;
+
+    auto greedy = QSharedPointer<Greedy>::create(inputData, rand());
+    auto best = greedy->run();
+
+    for(int i=1;i<steps;i++)
+    {
+        greedy = QSharedPointer<Greedy>::create(inputData, rand());
+
+        auto result = greedy->run();
+
+        if(result.first < best.first)
+        {
+            best.first = result.first;
+            best.second = result.second;
+        }
+    }
+
+    qDebug() << "";
+    qDebug() << QString(50, '*');
+    qDebug() << "BEST SOLUTION";
+    qDebug() << "Solution:" << best.second;
+    qDebug() << "Best cost" << best.first;
+    qDebug() << QString(50, '*');
+}
+
 int main()
 {
+//    Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
+//    Matrix B{{5,3,1,55},{2,98,6,54},{38,66,1,12},{5,31,2,2}};
+//    auto inputData = QSharedPointer<Input>::create(A,B);
+
     auto inputData = QSharedPointer<Input>::create();
-    inputData->readFromFile("data/bur26f.dat");
+    inputData->readFromFile("data/bur26a.dat");
 
-    costTest(inputData);
+//    costTest(inputData);
 
-//    LocalSearch localSearch(inputData);
-//    QElapsedTimer elapsedTimer;
+//    twoOptTest();
 
-//    elapsedTimer.start();
-//    localSearch.run();
-
-//    qDebug() << "Elapsed time: " + QString::number(elapsedTimer.nsecsElapsed()) + " nsec";
-//    qDebug() << "Elapsed time: " + QString::number(elapsedTimer.elapsed()) + " msec";
+    greedyTest(inputData);
 
     return 0;
 }

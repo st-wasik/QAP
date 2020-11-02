@@ -1,9 +1,9 @@
 #include "common.h"
 #include "random"
 
-QSharedPointer<QVector<int>> randomPermutation(const int n)
+QSharedPointer<QVector<int>> randomPermutation(const int n, int seed)
 {
-    static std::mt19937 randomGenerator;
+    static std::mt19937 randomGenerator(seed);
 
     auto result = QSharedPointer<QVector<int>>::create(n);
 
@@ -14,7 +14,7 @@ QSharedPointer<QVector<int>> randomPermutation(const int n)
     {
         do
         {
-            randomValue = std::abs(static_cast<int>(randomGenerator())) % n + 1;
+            randomValue = std::abs(static_cast<int>(randomGenerator())) % n;
         }
         while(usedElements.contains(randomValue));
 

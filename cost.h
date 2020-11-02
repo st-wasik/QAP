@@ -9,13 +9,13 @@ class Cost
 public:
     Cost(QSharedPointer<const Input> inputData);
     // "Monożymy odległość razy siłę interakcji [...]"
-    void calculateCost(QVector<int> &solution);
+    void calculateCost(QSharedPointer<QVector<int>> solution);
     // "By uzyskać czas liniowy, musimy zauważyć, że jeżeli zmieniły się tylko dwa elementy w permutacji pi,
     // to wpłynęło to tylko na dwa wiersze i dwie kolumny"
-    void updateCost(QVector<int> &solution, int i, int j);
+    long long getUpdatedCost(QSharedPointer<QVector<int>> solution, int i, int j);
 
     long long getCost();
-
+    void setCost(long long cost);
 private:
     long long _cost;
     QSharedPointer<const Input> _inputData;

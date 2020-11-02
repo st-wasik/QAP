@@ -4,6 +4,14 @@ Input::Input()
 {
 }
 
+Input::Input(Matrix dist, Matrix interact)
+{
+    _dim = dist.count();
+
+    distances = QSharedPointer<Matrix>::create(dist);
+    interactions = QSharedPointer<Matrix>::create(interact);
+}
+
 void Input::readFromFile(QString filename)
 {
     QFile file(filename);

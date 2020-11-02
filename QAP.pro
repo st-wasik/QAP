@@ -3,6 +3,7 @@ QT += core
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
+QMAKE_CXXFLAGS += -O3
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -19,12 +20,12 @@ SOURCES += main.cpp \
     two_opt.cpp \
     input.cpp \
     cost.cpp \
-    localsearch.cpp \
-    common.cpp
+    common.cpp \
+    greedy.cpp
 
 HEADERS += \
     two_opt.h \
     common.h \
     input.h \
     cost.h \
-    localsearch.h
+    greedy.h

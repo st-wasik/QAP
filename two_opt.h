@@ -6,17 +6,15 @@
 class Two_OPT
 {
 public:
-    Two_OPT(int dim);
-    QVector<int> next();
+    Two_OPT(int dim, QSharedPointer<QVector<int>> solution);
+    QSharedPointer<QVector<int>> next();
     void reset();
-    bool isDone();
+    int getI();
+    int getJ();
 
 private:
     int _dim, i, j;
-    bool _done;
-    QVector<int> _solution;
-
-    QVector<int> swap(int i, int j);
+    QSharedPointer<QVector<int>> _solution;
 };
 
 #endif // TWO_OPT_H

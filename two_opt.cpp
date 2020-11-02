@@ -1,34 +1,51 @@
 #include "two_opt.h"
 
-Two_OPT::Two_OPT(int dim)
+Two_OPT::Two_OPT(int dim, QSharedPointer<QVector<int>> solution)
 {
     _dim = dim;
+    _solution = solution;
     reset();
 }
-
-bool Two_OPT::isDone() {return _done;}
 
 void Two_OPT::reset()
 {
     i = 0;
-    j = 1;
-    _done = false;
+    j = 0;
 }
 
-QVector<int> Two_OPT::next()
+int Two_OPT::getI()
 {
+    return i;
+}
+
+int Two_OPT::getJ()
+{
+    return j;
+}
+
+QSharedPointer<QVector<int>> Two_OPT::next()
+{
+    if(!(i == 0 && j == 0))
+    {
+        // swap solution back to state before previosu 'next' call
+        std::swap((*_solution)[i], (*_solution)[j]);
+    }
+
+    j++;
     if (j == _dim)
-        j = ++i + 1;
+    {
+        i++;
+        if(i == (_dim - 1))
+        {
+            return nullptr; // is done
+        }
+        else
+        {
+            j = i + 1;
+        }
+    }
 
-    if (i == _dim - 1) {} // ... // fuck this
+    std::swap((*_solution)[i], (*_solution)[j]);
 
-    return swap(i, j++);
-}
-
-QVector<int> Two_OPT::swap(int i, int j)
-{
-//    int temp;
-//    temp = solution[i];
-//    solution[i] = solution[j];
-//    solution[j] = temp;
+    return _solution;
 }

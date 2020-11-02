@@ -6,9 +6,11 @@ Cost::Cost(QSharedPointer<const Input> inputData)
     _cost = 0;
 }
 
-void Cost::calculateCost(QVector<int> &solution)
+void Cost::calculateCost(QSharedPointer<QVector<int>> solutionPtr)
 {
     auto& cost = _cost;
+    auto& solution = *solutionPtr;
+
     cost = 0;
     const int dim = _inputData->getDimension();
 
@@ -28,15 +30,16 @@ void Cost::calculateCost(QVector<int> &solution)
  * @param posB: solutions's second changed element index
  * example when [1,2,3,4] -> [4,2,3,1]; then posA is 0, posB is 3
  */
-void Cost::updateCost(QVector<int> &solution, int posA, int posB)
+long long Cost::getUpdatedCost(QSharedPointer<QVector<int>> solutionPtr, int posA, int posB)
 {
-    auto& cost = _cost;
+    long long cost = _cost;
+
 
     const int dim = _inputData->getDimension();
     int i=0, j=0;
 
     {
-        QVector<int> oldSolution = solution;
+        QVector<int> oldSolution = *solutionPtr;
         std::swap(oldSolution[posA], oldSolution[posB]);
 
         auto &s = oldSolution;
@@ -79,7 +82,7 @@ void Cost::updateCost(QVector<int> &solution, int posA, int posB)
     // REPEAT THESE STEPS FOR NEW SOLUTION (BUT ADD COST)
 
     {
-        auto &s = solution;
+        auto &s = *solutionPtr;
 
         // ADD SUM OF ROW VALUES
         i = posA;
@@ -115,9 +118,16 @@ void Cost::updateCost(QVector<int> &solution, int posA, int posB)
         cost -= (*_inputData->distances)[s[posB]][s[posA]] * (*_inputData->interactions)[posB][posA];
         cost -= (*_inputData->distances)[s[posB]][s[posB]] * (*_inputData->interactions)[posB][posB];
     }
+
+    return cost;
 }
 
 long long Cost::getCost()
 {
     return _cost;
+}
+
+void Cost::setCost(long long cost)
+{
+    _cost = cost;
 }
