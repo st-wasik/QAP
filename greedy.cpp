@@ -60,8 +60,3 @@ QPair<long long, QVector<int>> Greedy::run()
 
     return QPair<long long, QVector<int>>{bestCost, *_solution};
 }
-
-QSharedPointer<QVector<int>> Greedy::getSolution()
-{
-    return _solution;
-}

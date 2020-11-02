@@ -11,8 +11,6 @@ class Greedy
 public:
     Greedy(QSharedPointer<const Input> inputData, int seed=42);
 
-    QSharedPointer<QVector<int>> getSolution();
-
     QPair<long long, QVector<int>> run();
 private:
     QSharedPointer<QVector<int>> _solution;

@@ -21,11 +21,13 @@ SOURCES += main.cpp \
     input.cpp \
     cost.cpp \
     common.cpp \
-    greedy.cpp
+    greedy.cpp \
+    steepest.cpp
 
 HEADERS += \
     two_opt.h \
     common.h \
     input.h \
     cost.h \
-    greedy.h
+    greedy.h \
+    steepest.h

@@ -6,6 +6,7 @@
 #include "two_opt.h"
 #include "input.h"
 #include "greedy.h"
+#include "steepest.h"
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -89,6 +90,36 @@ void greedyTest(QSharedPointer<const Input> inputData)
     qDebug() << QString(50, '*');
 }
 
+void steepestTest(QSharedPointer<const Input> inputData)
+{
+    srand(static_cast<quint32>(time(nullptr)));
+
+    constexpr auto steps = 125;
+
+    auto steepest = QSharedPointer<Steepest>::create(inputData, rand());
+    auto best = steepest->run();
+
+    for(int i=1;i<steps;i++)
+    {
+        steepest = QSharedPointer<Steepest>::create(inputData, rand());
+
+        auto result = steepest->run();
+
+        if(result.first < best.first)
+        {
+            best.first = result.first;
+            best.second = result.second;
+        }
+    }
+
+    qDebug() << "";
+    qDebug() << QString(50, '*');
+    qDebug() << "BEST SOLUTION";
+    qDebug() << "Solution:" << best.second;
+    qDebug() << "Best cost" << best.first;
+    qDebug() << QString(50, '*');
+}
+
 int main()
 {
 //    Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
@@ -102,7 +133,9 @@ int main()
 
 //    twoOptTest();
 
-    greedyTest(inputData);
+//    greedyTest(inputData);
+
+    steepestTest(inputData);
 
     return 0;
 }
