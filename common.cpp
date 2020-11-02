@@ -24,3 +24,16 @@ QSharedPointer<QVector<int>> randomPermutation(const int n, int seed)
 
     return result;
 }
+
+int newton2(int n)
+{
+    constexpr int k=2;
+    return (n * (n-1)) / k;
+}
+
+int random(int n, int seed)
+{
+    static std::mt19937 randomGenerator(seed);
+
+    return std::abs(static_cast<int>(randomGenerator())) % n;
+}

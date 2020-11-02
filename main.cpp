@@ -7,6 +7,7 @@
 #include "input.h"
 #include "greedy.h"
 #include "steepest.h"
+#include "randomwalk.h"
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -120,6 +121,38 @@ void steepestTest(QSharedPointer<const Input> inputData)
     qDebug() << QString(50, '*');
 }
 
+void randomWalkTest(QSharedPointer<const Input> inputData)
+{
+    srand(static_cast<quint32>(time(nullptr)));
+
+    constexpr auto steps = 125;
+
+    constexpr auto rwalkSteps = 25000;
+
+    auto rwalk = QSharedPointer<RandomWalk>::create(inputData, rand());
+    auto best = rwalk->run(rwalkSteps);
+
+    for(int i=1;i<steps;i++)
+    {
+        rwalk = QSharedPointer<RandomWalk>::create(inputData, rand());
+
+        auto result = rwalk->run(rwalkSteps);
+
+        if(result.first < best.first)
+        {
+            best.first = result.first;
+            best.second = result.second;
+        }
+    }
+
+    qDebug() << "";
+    qDebug() << QString(50, '*');
+    qDebug() << "BEST SOLUTION";
+    qDebug() << "Solution:" << best.second;
+    qDebug() << "Best cost" << best.first;
+    qDebug() << QString(50, '*');
+}
+
 int main()
 {
 //    Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
@@ -135,7 +168,9 @@ int main()
 
 //    greedyTest(inputData);
 
-    steepestTest(inputData);
+//    steepestTest(inputData);
+
+    randomWalkTest(inputData);
 
     return 0;
 }
