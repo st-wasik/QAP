@@ -10,6 +10,7 @@
 #include "steepest.h"
 #include "randomwalk.h"
 #include "heuristic.h"
+#include "random.h"
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -182,6 +183,39 @@ void heuristicTest(QSharedPointer<const Input> inputData)
     qDebug() << QString(50, '*');
 }
 
+
+void randomTest(QSharedPointer<const Input> inputData)
+{
+    srand(static_cast<quint32>(time(nullptr)));
+
+    constexpr auto steps = 125;
+
+    constexpr auto randomTimeMSec = 50;
+
+    auto random = QSharedPointer<Random>::create(inputData, rand());
+    auto best = random->run(randomTimeMSec);
+
+    for(int i=1;i<steps;i++)
+    {
+        random = QSharedPointer<Random>::create(inputData, rand());
+
+        auto result = random->run(randomTimeMSec);
+
+        if(result.first < best.first)
+        {
+            best.first = result.first;
+            best.second = result.second;
+        }
+    }
+
+    qDebug() << "";
+    qDebug() << QString(50, '*');
+    qDebug() << "BEST SOLUTION";
+    qDebug() << "Solution:" << best.second;
+    qDebug() << "Best cost" << best.first;
+    qDebug() << QString(50, '*');
+}
+
 int main()
 {
     auto inputData = QSharedPointer<Input>::create();
@@ -201,7 +235,9 @@ int main()
 
 //    randomWalkTest(inputData2);
 
-    heuristicTest(inputData);
+//    heuristicTest(inputData);
+
+    randomTest(inputData);
 
     return 0;
 }
