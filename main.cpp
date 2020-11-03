@@ -2,12 +2,14 @@
 #include "common.h"
 #include <QElapsedTimer>
 #include <QFile>
+#include <QSet>
 
 #include "two_opt.h"
 #include "input.h"
 #include "greedy.h"
 #include "steepest.h"
 #include "randomwalk.h"
+#include "heuristic.h"
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -153,14 +155,41 @@ void randomWalkTest(QSharedPointer<const Input> inputData)
     qDebug() << QString(50, '*');
 }
 
+void heuristicTest(QSharedPointer<const Input> inputData)
+{
+    srand(static_cast<quint32>(time(nullptr)));
+
+    auto heuristic = QSharedPointer<Heuristic>::create(inputData, rand());
+    auto best = heuristic->run(false);
+
+    heuristic = QSharedPointer<Heuristic>::create(inputData, rand());
+    auto result = heuristic->run(true);
+
+    qDebug() << "First all unique:" << (QSet<int>::fromList(QVector<int>(best.second).toList()).count() == best.second.count());
+    qDebug() << "Second all unique:" << (QSet<int>::fromList(QVector<int>(result.second).toList()).count() == result.second.count());
+
+    if(result.first < best.first)
+    {
+        best.first = result.first;
+        best.second = result.second;
+    }
+
+    qDebug() << "";
+    qDebug() << QString(50, '*');
+    qDebug() << "BEST SOLUTION";
+    qDebug() << "Solution:" << best.second;
+    qDebug() << "Best cost" << best.first;
+    qDebug() << QString(50, '*');
+}
+
 int main()
 {
-//    Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
-//    Matrix B{{5,3,1,55},{2,98,6,54},{38,66,1,12},{5,31,2,2}};
-//    auto inputData = QSharedPointer<Input>::create(A,B);
-
     auto inputData = QSharedPointer<Input>::create();
     inputData->readFromFile("data/bur26a.dat");
+
+    Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
+    Matrix B{{5,3,1,55},{2,98,6,54},{38,66,1,12},{5,31,2,2}};
+    auto inputData2 = QSharedPointer<Input>::create(A,B);
 
 //    costTest(inputData);
 
@@ -168,9 +197,11 @@ int main()
 
 //    greedyTest(inputData);
 
-//    steepestTest(inputData);
+//    steepestTest(inputData2);
 
-    randomWalkTest(inputData);
+//    randomWalkTest(inputData2);
+
+    heuristicTest(inputData);
 
     return 0;
 }

@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     common.cpp \
     greedy.cpp \
     steepest.cpp \
-    randomwalk.cpp
+    randomwalk.cpp \
+    heuristic.cpp
 
 HEADERS += \
     two_opt.h \
@@ -32,4 +33,5 @@ HEADERS += \
     cost.h \
     greedy.h \
     steepest.h \
-    randomwalk.h
+    randomwalk.h \
+    heuristic.h
