@@ -1,10 +1,12 @@
 #include <random>
-#include "common.h"
 #include <QElapsedTimer>
 #include <QFile>
 #include <QMutex>
 #include <QSet>
+#include <QFuture>
+#include <QtConcurrent/QtConcurrentRun>
 
+#include "common.h"
 #include "two_opt.h"
 #include "input.h"
 #include "greedy.h"
@@ -12,10 +14,6 @@
 #include "randomwalk.h"
 #include "heuristic.h"
 #include "random.h"
-
-#include <QFuture>
-
-#include <QtConcurrent/QtConcurrentRun>
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -84,14 +82,14 @@ void greedyTest(QSharedPointer<const Input> inputData)
     srand(static_cast<quint32>(time(nullptr)));
     randomPermutation(0, rand()); // set seed
 
-    constexpr auto steps = 5000;
+    constexpr auto attempts = 5000;
 
     QMutex mutex;
     auto best = QSharedPointer<Greedy>::create(inputData)->run();
 
     QVector<QFuture<void>> futures;
 
-    for(int i=1;i<steps;i++)
+    for(int i=1;i<attempts;i++)
     {
         futures << QtConcurrent::run([&,i]
         {
@@ -127,12 +125,12 @@ void steepestTest(QSharedPointer<const Input> inputData)
 {
     srand(static_cast<quint32>(time(nullptr)));
 
-    constexpr auto steps = 125;
+    constexpr auto attempts = 125;
 
     auto steepest = QSharedPointer<Steepest>::create(inputData, rand());
     auto best = steepest->run();
 
-    for(int i=1;i<steps;i++)
+    for(int i=1;i<attempts;i++)
     {
         steepest = QSharedPointer<Steepest>::create(inputData, rand());
 
@@ -157,14 +155,14 @@ void randomWalkTest(QSharedPointer<const Input> inputData)
 {
     srand(static_cast<quint32>(time(nullptr)));
 
-    constexpr auto steps = 125;
+    constexpr auto attempts = 125;
 
     constexpr auto rwalkTimeMSec = 250;
 
     auto rwalk = QSharedPointer<RandomWalk>::create(inputData, rand());
     auto best = rwalk->run(rwalkTimeMSec);
 
-    for(int i=1;i<steps;i++)
+    for(int i=1;i<attempts;i++)
     {
         rwalk = QSharedPointer<RandomWalk>::create(inputData, rand());
 
@@ -187,22 +185,47 @@ void randomWalkTest(QSharedPointer<const Input> inputData)
 
 void heuristicTest(QSharedPointer<const Input> inputData)
 {
+    QElapsedTimer t;
+    t.start();
+
     srand(static_cast<quint32>(time(nullptr)));
+    randomPermutation(0, rand()); // set seed
 
-    auto heuristic = QSharedPointer<Heuristic>::create(inputData, rand());
-    auto best = heuristic->run(false);
+    constexpr auto attempts = 200;
 
-    heuristic = QSharedPointer<Heuristic>::create(inputData, rand());
-    auto result = heuristic->run(true);
+    QMutex mutex;
+    auto best = QSharedPointer<Heuristic>::create(inputData)->run();
 
-    qDebug() << "First all unique:" << (QSet<int>::fromList(QVector<int>(best.second).toList()).count() == best.second.count());
-    qDebug() << "Second all unique:" << (QSet<int>::fromList(QVector<int>(result.second).toList()).count() == result.second.count());
+    QVector<QFuture<void>> futures;
 
-    if(result.first < best.first)
+    std::mt19937 randGenerator(rand());
+
+    for(int i=1;i<attempts;i++)
     {
-        best.first = result.first;
-        best.second = result.second;
+        futures << QtConcurrent::run([&,i]
+        {
+            qDebug() << "Running instance no." << i;
+
+            const auto size = inputData->getDimension();
+            auto initialSolution = QSharedPointer<QVector<int>>::create(size, -1);
+            (*initialSolution)[std::abs(static_cast<int>(randGenerator())) % size] = std::abs(static_cast<int>(randGenerator())) % size;
+
+            const bool distancesDesc = static_cast<int>(randGenerator()) % 2;
+            auto result = QSharedPointer<Heuristic>::create(inputData, initialSolution)->run(distancesDesc);
+
+            qDebug() << "Instance" << i << "finished";
+
+            QMutexLocker lock(&mutex);
+            if(result.first < best.first)
+            {
+                best.first = result.first;
+                best.second = result.second;
+            }
+        });
     }
+
+    for(auto& future : futures)
+        future.waitForFinished();
 
     qDebug() << "";
     qDebug() << QString(50, '*');
@@ -210,21 +233,21 @@ void heuristicTest(QSharedPointer<const Input> inputData)
     qDebug() << "Solution:" << best.second;
     qDebug() << "Best cost" << best.first;
     qDebug() << QString(50, '*');
+    qDebug() << "Total time" << t.elapsed() << "msec";
 }
-
 
 void randomTest(QSharedPointer<const Input> inputData)
 {
     srand(static_cast<quint32>(time(nullptr)));
 
-    constexpr auto steps = 125;
+    constexpr auto attempts = 125;
 
     constexpr auto randomTimeMSec = 50;
 
     auto random = QSharedPointer<Random>::create(inputData, rand());
     auto best = random->run(randomTimeMSec);
 
-    for(int i=1;i<steps;i++)
+    for(int i=1;i<attempts;i++)
     {
         random = QSharedPointer<Random>::create(inputData, rand());
 
@@ -258,13 +281,13 @@ int main()
 
 //    twoOptTest();
 
-    greedyTest(inputData);
+//    greedyTest(inputData);
 
 //    steepestTest(inputData2);
 
 //    randomWalkTest(inputData);
 
-//    heuristicTest(inputData);
+    heuristicTest(inputData2);
 
 //    randomTest(inputData);
 

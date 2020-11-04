@@ -4,10 +4,14 @@
 
 #include <qelapsedtimer.h>
 
-Heuristic::Heuristic(QSharedPointer<const Input> inputData, int seed)
+constexpr int valueNotSet = -1;
+
+Heuristic::Heuristic(QSharedPointer<const Input> inputData, QSharedPointer<QVector<int>> initialSolution)
 {
     _inputData = inputData;
-    _solution  = QSharedPointer<QVector<int>>::create(inputData->getDimension(), -1);
+    _solution  = initialSolution
+                    ? initialSolution
+                    : QSharedPointer<QVector<int>>::create(inputData->getDimension(), valueNotSet);
 }
 
 QPair<long long, QVector<int>> Heuristic::run(bool distancesDesc)
@@ -16,6 +20,7 @@ QPair<long long, QVector<int>> Heuristic::run(bool distancesDesc)
     t.start();
 
     QMultiMap<int, QPair<int,int>> distancesValuesToIndex;
+
     auto rowsCount = _inputData->distances->count();
     for(int i=0;i<rowsCount;++i)
     {
@@ -78,6 +83,10 @@ QPair<long long, QVector<int>> Heuristic::run(bool distancesDesc)
     int foundPermutationElementsCount = 0;
     QSet<int> usedDistIdx;
 
+    for(const auto& x:*_solution)
+        if(x != valueNotSet)
+            usedDistIdx.insert(x);
+
     for(const auto& interactionIdx : interactionsIdx)
     {
         if(foundPermutationElementsCount == _inputData->getDimension())
@@ -85,9 +94,9 @@ QPair<long long, QVector<int>> Heuristic::run(bool distancesDesc)
 
         for(const auto& distanceIdx : distancesIdx)
         {
-            if(isMappingAvailable(_solution, interactionIdx, distanceIdx)
-                && !usedDistIdx.contains(distanceIdx.first)
-                && !usedDistIdx.contains(distanceIdx.second))
+            if(!usedDistIdx.contains(distanceIdx.first)
+                && !usedDistIdx.contains(distanceIdx.second)
+                && isMappingAvailable(_solution, interactionIdx, distanceIdx))
             {
                 (*_solution)[interactionIdx.first] = distanceIdx.first;
                 (*_solution)[interactionIdx.second] = distanceIdx.second;
@@ -124,7 +133,7 @@ bool Heuristic::isMappingAvailable(QSharedPointer<QVector<int> > solution, QPair
     {
         if(distIndex.first == distIndex.second)
         {
-            if((*solution)[interactIndex.first] == -1)
+            if((*solution)[interactIndex.first] == valueNotSet)
             {
                 return true;
             }
@@ -142,7 +151,7 @@ bool Heuristic::isMappingAvailable(QSharedPointer<QVector<int> > solution, QPair
     {
         if(distIndex.first != distIndex.second)
         {
-            if((*solution)[interactIndex.first] == -1 && (*solution)[interactIndex.second] == -1)
+            if((*solution)[interactIndex.first] == valueNotSet && (*solution)[interactIndex.second] == valueNotSet)
             {
                 return true;
             }

@@ -6,7 +6,7 @@
 class Heuristic
 {
 public:
-    Heuristic(QSharedPointer<const Input> inputData, int seed=42);
+    Heuristic(QSharedPointer<const Input> inputData, QSharedPointer<QVector<int> > initialSolution=nullptr);
 
     QPair<long long, QVector<int>> run(bool distancesDesc = false);
 private:

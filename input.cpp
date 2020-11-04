@@ -85,6 +85,8 @@ void Input::readFromFile(QString filename)
 
     distances = A;
     interactions = B;
+
+    qDebug() << "File read finished!";
 }
 
 int Input::getDimension() const {return _dim;}
