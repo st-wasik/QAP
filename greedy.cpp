@@ -22,6 +22,7 @@ QPair<long long, QVector<int>> Greedy::run()
     Two_OPT opt(nextSolution->count(), nextSolution);
 
     int neighbor = 0, totalSteps = 0, betterFound = 0;
+    long long updatedCost = 0;
 
     while ((nextSolution = opt.next()) != nullptr)
     {
@@ -34,7 +35,7 @@ QPair<long long, QVector<int>> Greedy::run()
         // Jeśli neighbour jest lepszy to _solution = neighbour
         // Jeśli żaden neighbour nie był lepszy improvment = false
 
-        auto updatedCost = cost.getUpdatedCost(nextSolution, opt.getI(), opt.getJ());
+        updatedCost = cost.getUpdatedCost(nextSolution, opt.getI(), opt.getJ());
 
         if(updatedCost < bestCost)
         {

@@ -7,7 +7,7 @@ class RandomWalk
 {
 public:
     RandomWalk(QSharedPointer<const Input> inputData, int seed);
-    QPair<long long, QVector<int> > run(int steps);
+    QPair<long long, QVector<int> > run(long timeLimitMSec);
 private:
     QSharedPointer<QVector<int>> _solution;
     QSharedPointer<const Input>  _inputData;

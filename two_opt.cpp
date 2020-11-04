@@ -27,7 +27,7 @@ QSharedPointer<QVector<int>> Two_OPT::next()
 {
     if(!(i == 0 && j == 0))
     {
-        // swap solution back to state before previosu 'next' call
+        // swap solution back to state before previous 'next' call
         std::swap((*_solution)[i], (*_solution)[j]);
     }
 

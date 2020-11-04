@@ -2,6 +2,7 @@
 #include "randomwalk.h"
 #include "two_opt.h"
 
+#include <qdatetime.h>
 #include <qelapsedtimer.h>
 
 RandomWalk::RandomWalk(QSharedPointer<const Input> inputData, int seed)
@@ -10,7 +11,7 @@ RandomWalk::RandomWalk(QSharedPointer<const Input> inputData, int seed)
     _solution  = randomPermutation(inputData->getDimension(), seed);
 }
 
-QPair<long long, QVector<int>> RandomWalk::run(int steps)
+QPair<long long, QVector<int>> RandomWalk::run(long timeLimitMSec)
 {
     QElapsedTimer t;
     t.start();
@@ -23,12 +24,15 @@ QPair<long long, QVector<int>> RandomWalk::run(int steps)
     Two_OPT opt(nextSolution->count(), nextSolution);
 
     int betterFound = 0;
+    int steps = 0;
 
     int nbors = newton2(_inputData->getDimension());
-
-    for(int i=0; i<steps; ++i)
+    auto initialDateTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    while((QDateTime::currentDateTime().toMSecsSinceEpoch() - initialDateTime) <= timeLimitMSec)
     {
         auto nborIndex = random(nbors);
+
+        steps++;
 
         for(int j=0; j<=nborIndex;++j)
         {

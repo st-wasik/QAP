@@ -34,27 +34,19 @@ long long Cost::getUpdatedCost(QSharedPointer<QVector<int>> solutionPtr, int pos
 {
     long long cost = _cost;
 
-
     const int dim = _inputData->getDimension();
     int i=0, j=0;
 
     {
-        QVector<int> oldSolution = *solutionPtr;
-        std::swap(oldSolution[posA], oldSolution[posB]);
+        std::swap((*solutionPtr)[posA], (*solutionPtr)[posB]);
 
-        auto &s = oldSolution;
+        auto &s = *solutionPtr;
 
         // SUBTRACT SUM OF ROW VALUES
-        i = posA;
         for (int j = 0; j < dim; ++j)
         {
-            cost -= (*_inputData->distances)[s[i]][s[j]] * (*_inputData->interactions)[i][j];
-        }
-
-        i = posB;
-        for (int j = 0; j < dim; ++j)
-        {
-            cost -= (*_inputData->distances)[s[i]][s[j]] * (*_inputData->interactions)[i][j];
+            cost -= (*_inputData->distances)[s[posA]][s[j]] * (*_inputData->interactions)[posA][j]
+                  + (*_inputData->distances)[s[posB]][s[j]] * (*_inputData->interactions)[posB][j];
         }
         // END
 
@@ -62,25 +54,21 @@ long long Cost::getUpdatedCost(QSharedPointer<QVector<int>> solutionPtr, int pos
         j = posA;
         for (int i = 0; i < dim; ++i)
         {
-            cost -= (*_inputData->distances)[s[i]][s[j]] * (*_inputData->interactions)[i][j];
-        }
-
-        j = posB;
-        for (int i = 0; i < dim; ++i)
-        {
-            cost -= (*_inputData->distances)[s[i]][s[j]] * (*_inputData->interactions)[i][j];
+            cost -= (*_inputData->distances)[s[i]][s[posA]] * (*_inputData->interactions)[i][posA]
+                  + (*_inputData->distances)[s[i]][s[posB]] * (*_inputData->interactions)[i][posB];
         }
         // END
 
         // ADD TWICE SUBTRACTED VALUES
-        cost += (*_inputData->distances)[s[posA]][s[posA]] * (*_inputData->interactions)[posA][posA];
-        cost += (*_inputData->distances)[s[posA]][s[posB]] * (*_inputData->interactions)[posA][posB];
-        cost += (*_inputData->distances)[s[posB]][s[posA]] * (*_inputData->interactions)[posB][posA];
-        cost += (*_inputData->distances)[s[posB]][s[posB]] * (*_inputData->interactions)[posB][posB];
+        cost += (*_inputData->distances)[s[posA]][s[posA]] * (*_inputData->interactions)[posA][posA]
+              + (*_inputData->distances)[s[posA]][s[posB]] * (*_inputData->interactions)[posA][posB]
+              + (*_inputData->distances)[s[posB]][s[posA]] * (*_inputData->interactions)[posB][posA]
+              + (*_inputData->distances)[s[posB]][s[posB]] * (*_inputData->interactions)[posB][posB];
+
+        std::swap((*solutionPtr)[posA], (*solutionPtr)[posB]);
     }
 
     // REPEAT THESE STEPS FOR NEW SOLUTION (BUT ADD COST)
-
     {
         auto &s = *solutionPtr;
 
@@ -88,13 +76,8 @@ long long Cost::getUpdatedCost(QSharedPointer<QVector<int>> solutionPtr, int pos
         i = posA;
         for (int j = 0; j < dim; ++j)
         {
-            cost += (*_inputData->distances)[s[i]][s[j]] * (*_inputData->interactions)[i][j];
-        }
-
-        i = posB;
-        for (int j = 0; j < dim; ++j)
-        {
-            cost += (*_inputData->distances)[s[i]][s[j]] * (*_inputData->interactions)[i][j];
+            cost += (*_inputData->distances)[s[posA]][s[j]] * (*_inputData->interactions)[posA][j]
+                  + (*_inputData->distances)[s[posB]][s[j]] * (*_inputData->interactions)[posB][j];
         }
         // END
 
@@ -102,21 +85,16 @@ long long Cost::getUpdatedCost(QSharedPointer<QVector<int>> solutionPtr, int pos
         j = posA;
         for (int i = 0; i < dim; ++i)
         {
-            cost += (*_inputData->distances)[s[i]][s[j]] * (*_inputData->interactions)[i][j];
-        }
-
-        j = posB;
-        for (int i = 0; i < dim; ++i)
-        {
-            cost += (*_inputData->distances)[s[i]][s[j]] * (*_inputData->interactions)[i][j];
+            cost += (*_inputData->distances)[s[i]][s[posA]] * (*_inputData->interactions)[i][posA]
+                  + (*_inputData->distances)[s[i]][s[posB]] * (*_inputData->interactions)[i][posB];
         }
         // END
 
         // SUBTRACT TWICE ADDED VALUES
-        cost -= (*_inputData->distances)[s[posA]][s[posA]] * (*_inputData->interactions)[posA][posA];
-        cost -= (*_inputData->distances)[s[posA]][s[posB]] * (*_inputData->interactions)[posA][posB];
-        cost -= (*_inputData->distances)[s[posB]][s[posA]] * (*_inputData->interactions)[posB][posA];
-        cost -= (*_inputData->distances)[s[posB]][s[posB]] * (*_inputData->interactions)[posB][posB];
+        cost -= (*_inputData->distances)[s[posA]][s[posA]] * (*_inputData->interactions)[posA][posA]
+              + (*_inputData->distances)[s[posA]][s[posB]] * (*_inputData->interactions)[posA][posB]
+              + (*_inputData->distances)[s[posB]][s[posA]] * (*_inputData->interactions)[posB][posA]
+              + (*_inputData->distances)[s[posB]][s[posB]] * (*_inputData->interactions)[posB][posB];
     }
 
     return cost;

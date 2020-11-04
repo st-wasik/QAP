@@ -2,6 +2,7 @@
 #include "common.h"
 #include <QElapsedTimer>
 #include <QFile>
+#include <QMutex>
 #include <QSet>
 
 #include "two_opt.h"
@@ -11,6 +12,10 @@
 #include "randomwalk.h"
 #include "heuristic.h"
 #include "random.h"
+
+#include <QFuture>
+
+#include <QtConcurrent/QtConcurrentRun>
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -54,37 +59,60 @@ void costTest(QSharedPointer<const Input> inputData)
 
 void twoOptTest()
 {
-    auto perm = QSharedPointer<QVector<int>>::create(QVector<int>{1,2,3});
-    Two_OPT opt(3, perm);
+    constexpr auto vectorSize = 150;
+    auto perm = QSharedPointer<QVector<int>>::create(vectorSize);
+    std::iota(perm->begin(), perm->end(), 0);
+    Two_OPT opt(perm->count(), perm);
 
+    QElapsedTimer t;
+    t.start();
+    auto i = 0;
     QSharedPointer<QVector<int>> next;
     while( (next = opt.next()) != nullptr )
     {
-        qDebug() << *next;
+        i++;
+//        qDebug() << *next;
     }
+    qDebug() << "Elapsed" << t.elapsed() << "msec" << "   Generated perms:" << i;
 }
 
 void greedyTest(QSharedPointer<const Input> inputData)
 {
+    QElapsedTimer t;
+    t.start();
+
     srand(static_cast<quint32>(time(nullptr)));
+    randomPermutation(0, rand()); // set seed
 
-    constexpr auto steps = 125;
+    constexpr auto steps = 5000;
 
-    auto greedy = QSharedPointer<Greedy>::create(inputData, rand());
-    auto best = greedy->run();
+    QMutex mutex;
+    auto best = QSharedPointer<Greedy>::create(inputData)->run();
+
+    QVector<QFuture<void>> futures;
 
     for(int i=1;i<steps;i++)
     {
-        greedy = QSharedPointer<Greedy>::create(inputData, rand());
-
-        auto result = greedy->run();
-
-        if(result.first < best.first)
+        futures << QtConcurrent::run([&,i]
         {
-            best.first = result.first;
-            best.second = result.second;
-        }
+            qDebug() << "Running instance no." << i;
+
+            auto greedy = QSharedPointer<Greedy>::create(inputData);
+            auto result = greedy->run();
+
+            qDebug() << "Instance" << i << "finished";
+
+            QMutexLocker lock(&mutex);
+            if(result.first < best.first)
+            {
+                best.first = result.first;
+                best.second = result.second;
+            }
+        });
     }
+
+    for(auto& future : futures)
+        future.waitForFinished();
 
     qDebug() << "";
     qDebug() << QString(50, '*');
@@ -92,6 +120,7 @@ void greedyTest(QSharedPointer<const Input> inputData)
     qDebug() << "Solution:" << best.second;
     qDebug() << "Best cost" << best.first;
     qDebug() << QString(50, '*');
+    qDebug() << "Total time" << t.elapsed() << "msec";
 }
 
 void steepestTest(QSharedPointer<const Input> inputData)
@@ -130,16 +159,16 @@ void randomWalkTest(QSharedPointer<const Input> inputData)
 
     constexpr auto steps = 125;
 
-    constexpr auto rwalkSteps = 25000;
+    constexpr auto rwalkTimeMSec = 250;
 
     auto rwalk = QSharedPointer<RandomWalk>::create(inputData, rand());
-    auto best = rwalk->run(rwalkSteps);
+    auto best = rwalk->run(rwalkTimeMSec);
 
     for(int i=1;i<steps;i++)
     {
         rwalk = QSharedPointer<RandomWalk>::create(inputData, rand());
 
-        auto result = rwalk->run(rwalkSteps);
+        auto result = rwalk->run(rwalkTimeMSec);
 
         if(result.first < best.first)
         {
@@ -219,7 +248,7 @@ void randomTest(QSharedPointer<const Input> inputData)
 int main()
 {
     auto inputData = QSharedPointer<Input>::create();
-    inputData->readFromFile("data/bur26a.dat");
+    inputData->readFromFile("cleanedData/lipa80a.dat2");
 
     Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
     Matrix B{{5,3,1,55},{2,98,6,54},{38,66,1,12},{5,31,2,2}};
@@ -229,15 +258,15 @@ int main()
 
 //    twoOptTest();
 
-//    greedyTest(inputData);
+    greedyTest(inputData);
 
 //    steepestTest(inputData2);
 
-//    randomWalkTest(inputData2);
+//    randomWalkTest(inputData);
 
 //    heuristicTest(inputData);
 
-    randomTest(inputData);
+//    randomTest(inputData);
 
     return 0;
 }
