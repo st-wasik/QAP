@@ -5,8 +5,9 @@
 #include "common.h"
 #include "cost.h"
 #include "input.h"
+#include "irunnable.hpp"
 
-class Greedy
+class Greedy : public IRunnable
 {
 public:
     Greedy(QSharedPointer<const Input> inputData, int seed=42);
@@ -15,6 +16,10 @@ public:
 private:
     QSharedPointer<QVector<int>> _solution;
     QSharedPointer<const Input>  _inputData;
+
+    // IRunnable interface
+public:
+    void runAlg(int timeMSec);
 };
 
 #endif // LOCALSEARCH_H

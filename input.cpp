@@ -14,6 +14,9 @@ Input::Input(Matrix dist, Matrix interact)
 
 void Input::readFromFile(QString filename)
 {
+    auto splitted = filename.split("/", QString::SkipEmptyParts);
+    this->filename = splitted.last().split(".", QString::SkipEmptyParts).first();
+
     QFile file(filename);
 
     QSharedPointer<Matrix> A, B;
@@ -87,6 +90,11 @@ void Input::readFromFile(QString filename)
     interactions = B;
 
     qDebug() << "File read finished!";
+}
+
+QString Input::getFilename() const
+{
+    return filename;
 }
 
 int Input::getDimension() const {return _dim;}

@@ -1,4 +1,5 @@
 #include "cost.h"
+#include "globaloutput.hpp"
 #include "randomwalk.h"
 #include "two_opt.h"
 
@@ -53,13 +54,23 @@ QPair<long long, QVector<int>> RandomWalk::run(long timeLimitMSec)
 
     auto elapsed = t.elapsed();
 
-    qDebug() << QString(50, '*');
-    qDebug() << "Solution:" << *_solution;
-    qDebug() << "Best cost:" << bestCost;
-    qDebug() << "Total steps:" << steps;
-    qDebug() << "Solution improved" << betterFound << "times";
-    qDebug() << "Elapsed time:" << elapsed << "msec";
-    qDebug() << QString(50, '*');
+//    qDebug() << QString(50, '*');
+//    qDebug() << "Solution:" << *_solution;
+//    qDebug() << "Best cost:" << bestCost;
+//    qDebug() << "Total steps:" << steps;
+//    qDebug() << "Solution improved" << betterFound << "times";
+//    qDebug() << "Elapsed time:" << elapsed << "msec";
+//    qDebug() << QString(50, '*');
+
+    QStringList row;
+    row << _inputData->getFilename() << "RANDOMWALK" << QString::number(bestCost) << QString::number(elapsed) << QString::number(-1) /*jumps*/ << QString::number(steps) /*checked solutions*/;
+
+    GlobalOutput::getInstance().write(row.join(","));
 
     return QPair<long long, QVector<int>>{bestCost, *_solution};
+}
+
+void RandomWalk::runAlg(int timeMSec)
+{
+    run(timeMSec);
 }

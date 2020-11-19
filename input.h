@@ -16,8 +16,12 @@ public:
 
     void readFromFile(QString filename);
 
+    QString getFilename() const;
+
 private:
     int _dim;
+
+    QString filename;
 };
 
 #endif // INPUT_H

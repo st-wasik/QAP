@@ -14,6 +14,7 @@
 #include "randomwalk.h"
 #include "heuristic.h"
 #include "random.h"
+#include "globaloutput.hpp"
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -194,7 +195,7 @@ void heuristicTest(QSharedPointer<const Input> inputData)
     constexpr auto attempts = 200;
 
     QMutex mutex;
-    auto best = QSharedPointer<Heuristic>::create(inputData)->run();
+    auto best = QSharedPointer<Heuristic>::create(inputData)->run(false);
 
     QVector<QFuture<void>> futures;
 
@@ -268,8 +269,86 @@ void randomTest(QSharedPointer<const Input> inputData)
     qDebug() << QString(50, '*');
 }
 
+enum class Algorithm {Steepest, Greedy, Heuristic, Random, RandomWalk};
+
+void go_go_go()
+{
+    srand(static_cast<quint32>(time(nullptr)));
+    randomPermutation(0, rand()); // set seed
+
+    QVector<QString> inputDatas{ "cleanedData/lipa30b.dat2"
+
+    };
+
+    QVector<Algorithm> algorithms { Algorithm::Steepest
+                                  , Algorithm::Greedy
+                                  , Algorithm::Heuristic
+                                  , Algorithm::Random
+                                  , Algorithm::RandomWalk
+                                  };
+
+    const auto threadsCount = QThread::idealThreadCount();
+    // mechanizm: cołaska, minimum 50 złotych (xd)
+    constexpr auto timeLimitMSec = 3 * 1000;
+    constexpr auto minimumRunsCount = 13;
+
+    QVector<QFuture<void>> futures;
+
+    for(const auto& dataFile : inputDatas)
+    {
+        auto inputData = QSharedPointer<Input>::create();
+        inputData->readFromFile(dataFile);
+
+        for(const auto& alg : algorithms)
+        {
+            QElapsedTimer timer;
+            timer.start();
+
+            for(int runs = 0; runs < minimumRunsCount || timer.elapsed() < timeLimitMSec; runs += threadsCount)
+            {
+                for(int i=0;i<threadsCount;i++)
+                {
+                    futures << QtConcurrent::run([&,i]
+                    {
+                        qDebug() << "Running instance no." << i;
+
+                        IRunnable* algorithm = nullptr;
+                        switch (alg)
+                        {
+                        case Algorithm::Greedy:
+                            algorithm = new Greedy(inputData); break;
+                        case Algorithm::Steepest:
+                            algorithm = new Steepest(inputData); break;
+                        case Algorithm::Heuristic:
+                            algorithm = new Heuristic(inputData, true); break;
+                        case Algorithm::Random:
+                            algorithm = new Random(inputData); break;
+                        case Algorithm::RandomWalk:
+                            algorithm = new RandomWalk(inputData); break;
+                        }
+
+                        algorithm->runAlg(1 * 1000);
+                        delete algorithm;
+
+                        qDebug() << "Instance" << i << "finished";
+                    });
+                }
+
+                for(auto& future : futures)
+                {
+                    future.waitForFinished();
+                }
+
+                futures.clear();
+            }
+        }
+    }
+}
+
 int main()
 {
+    srand(time(NULL));
+
     auto inputData = QSharedPointer<Input>::create();
     inputData->readFromFile("cleanedData/lipa80a.dat2");
 
@@ -287,9 +366,13 @@ int main()
 
 //    randomWalkTest(inputData);
 
-    heuristicTest(inputData2);
+//    heuristicTest(inputData2);
 
 //    randomTest(inputData);
+
+    GlobalOutput::getInstance().resetFileContent();
+
+    go_go_go();
 
     return 0;
 }

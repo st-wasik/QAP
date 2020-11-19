@@ -2,6 +2,7 @@
 #include "two_opt.h"
 
 #include <qelapsedtimer.h>
+#include "globaloutput.hpp"
 
 Greedy::Greedy(QSharedPointer<const Input> inputData, int seed)
 {
@@ -51,13 +52,23 @@ QPair<long long, QVector<int>> Greedy::run()
 
     auto elapsed = t.elapsed();
 
-    qDebug() << QString(50, '*');
-    qDebug() << "Solution:" << *_solution;
-    qDebug() << "Best cost:" << bestCost;
-    qDebug() << "Total steps:" << totalSteps;
-    qDebug() << "Solution improved" << betterFound << "times";
-    qDebug() << "Elapsed time:" << elapsed << "msec";
-    qDebug() << QString(50, '*');
+//    qDebug() << QString(50, '*');
+//    qDebug() << "Solution:" << *_solution;
+//    qDebug() << "Best cost:" << bestCost;
+//    qDebug() << "Total steps:" << totalSteps;
+//    qDebug() << "Solution improved" << betterFound << "times";
+//    qDebug() << "Elapsed time:" << elapsed << "msec";
+//    qDebug() << QString(50, '*');
+
+    QStringList row;
+    row << _inputData->getFilename() << "GREEDY" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/;
+
+    GlobalOutput::getInstance().write(row.join(","));
 
     return QPair<long long, QVector<int>>{bestCost, *_solution};
+}
+
+void Greedy::runAlg(int timeMSec)
+{
+    run();
 }

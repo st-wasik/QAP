@@ -1,4 +1,5 @@
 #include "cost.h"
+#include "globaloutput.hpp"
 #include "steepest.h"
 #include "two_opt.h"
 
@@ -61,13 +62,23 @@ QPair<long long, QVector<int> > Steepest::run()
 
     auto elapsed = t.elapsed();
 
-    qDebug() << QString(50, '*');
-    qDebug() << "Solution:" << *_solution;
-    qDebug() << "Best cost:" << bestCost;
-    qDebug() << "Total steps:" << totalSteps;
-    qDebug() << "Solution improved" << betterFound << "times";
-    qDebug() << "Elapsed time:" << elapsed << "msec";
-    qDebug() << QString(50, '*');
+//    qDebug() << QString(50, '*');
+//    qDebug() << "Solution:" << *_solution;
+//    qDebug() << "Best cost:" << bestCost;
+//    qDebug() << "Total steps:" << totalSteps;
+//    qDebug() << "Solution improved" << betterFound << "times";
+//    qDebug() << "Elapsed time:" << elapsed << "msec";
+//    qDebug() << QString(50, '*');
+
+    QStringList row;
+    row << _inputData->getFilename() << "STEEPEST" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/;
+
+    GlobalOutput::getInstance().write(row.join(","));
 
     return QPair<long long, QVector<int>>{bestCost, *_solution};
+}
+
+void Steepest::runAlg(int timeMSec)
+{
+    run();
 }

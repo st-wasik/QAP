@@ -25,7 +25,9 @@ SOURCES += main.cpp \
     steepest.cpp \
     randomwalk.cpp \
     heuristic.cpp \
-    random.cpp
+    random.cpp \
+    globaloutput.cpp \
+    irunnable.cpp
 
 HEADERS += \
     two_opt.h \
@@ -36,4 +38,6 @@ HEADERS += \
     steepest.h \
     randomwalk.h \
     heuristic.h \
-    random.h
+    random.h \
+    globaloutput.hpp \
+    irunnable.hpp
