@@ -20,21 +20,28 @@ Heuristic::Heuristic(QSharedPointer<const Input> inputData, QSharedPointer<QVect
 
 Heuristic::Heuristic(QSharedPointer<const Input> inputData, bool randomInitialSolution)
 {
-    static std::mt19937 randGenerator(rand());
+    static std::mt19937 randGenerator(std::abs(rand()));
     QSharedPointer<QVector<int>> initialSolution;
+
+    _inputData = inputData;
 
     if(randomInitialSolution)
     {
         const auto size = inputData->getDimension();
         auto initialSolution = QSharedPointer<QVector<int>>::create(size, -1);
-        (*initialSolution)[std::abs(static_cast<int>(randGenerator())) % size] = std::abs(static_cast<int>(randGenerator())) % size;
-        qDebug() << *initialSolution;
-    }
+        int valuesSet = std::round(std::sqrt(size));
 
-    _inputData = inputData;
-    _solution  = initialSolution
-                    ? initialSolution
-                    : QSharedPointer<QVector<int>>::create(inputData->getDimension(), valueNotSet);
+        for(int i=0;i<valuesSet;++i)
+            (*initialSolution)[std::abs(static_cast<int>(randGenerator())) % size] = std::abs(static_cast<int>(randGenerator())) % size;
+
+//        qDebug() << *initialSolution;
+
+        _solution  = initialSolution;
+    }
+    else
+    {
+        _solution  = QSharedPointer<QVector<int>>::create(inputData->getDimension(), valueNotSet);
+    }
 }
 
 QPair<long long, QVector<int>> Heuristic::run(bool distancesDesc)
@@ -141,6 +148,7 @@ QPair<long long, QVector<int>> Heuristic::run(bool distancesDesc)
 
 //    qDebug() << QString(50, '*');
 //    qDebug() << "Solution:" << *_solution;
+//    qDebug() << "\n";
 //    qDebug() << "Best cost:" << bestCost;
 ////    qDebug() << "Total steps:" << totalSteps;
 ////    qDebug() << "Solution improved" << betterFound << "times";

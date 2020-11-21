@@ -269,16 +269,40 @@ void randomTest(QSharedPointer<const Input> inputData)
     qDebug() << QString(50, '*');
 }
 
-enum class Algorithm {Steepest, Greedy, Heuristic, Random, RandomWalk};
+enum class Algorithm {Steepest = 1, Greedy = 2, Heuristic = 4, Random = 8, RandomWalk = 16};
+
+QString algorithmToString(Algorithm alg)
+{
+    switch(alg)
+    {
+    case Algorithm::Steepest: return "Steepest";
+    case Algorithm::Greedy: return "Greedy";
+    case Algorithm::Heuristic: return "Heuristics";
+    case Algorithm::Random: return "Random";
+    case Algorithm::RandomWalk: return "RandomWalk";
+    }
+
+    return QString();
+}
 
 void go_go_go()
 {
     srand(static_cast<quint32>(time(nullptr)));
     randomPermutation(0, rand()); // set seed
 
-    QVector<QString> inputDatas{ "cleanedData/lipa30b.dat2"
-
-    };
+    QVector<QString> inputDatas{ "cleanedData/bur26d.dat2"
+//                               , "cleanedData/lipa30b.dat2"
+//                               , "cleanedData/esc32a.dat2"
+//                               , "cleanedData/lipa40a.dat2"
+//                               , "cleanedData/wil50.dat2"
+//                               , "cleanedData/lipa60a.dat2"
+//                               , "cleanedData/sko72.dat2"
+//                               , "cleanedData/sko81.dat2"
+//                               , "cleanedData/lipa90b.dat2"
+//                               , "cleanedData/tai100a.dat2"
+//                               , "cleanedData/sko100d.dat2"
+//                               , "cleanedData/tai150b.dat2"
+                               };
 
     QVector<Algorithm> algorithms { Algorithm::Steepest
                                   , Algorithm::Greedy
@@ -289,7 +313,7 @@ void go_go_go()
 
     const auto threadsCount = QThread::idealThreadCount();
     // mechanizm: cołaska, minimum 50 złotych (xd)
-    constexpr auto timeLimitMSec = 3 * 1000;
+    constexpr auto timeLimitMSec = 10 * 1000;
     constexpr auto minimumRunsCount = 13;
 
     QVector<QFuture<void>> futures;
@@ -299,18 +323,26 @@ void go_go_go()
         auto inputData = QSharedPointer<Input>::create();
         inputData->readFromFile(dataFile);
 
+        qDebug() << "***** ***** ***** ***** ***** ***** ***** *****";
+        qDebug() << "Running instance" << dataFile;
+
         for(const auto& alg : algorithms)
         {
             QElapsedTimer timer;
             timer.start();
 
+            qDebug() << "----- ----- ----- ----- -----";
+            qDebug() << "Running algorithm" << algorithmToString(alg);
+
+            int instancesCount = 0;
+
             for(int runs = 0; runs < minimumRunsCount || timer.elapsed() < timeLimitMSec; runs += threadsCount)
             {
                 for(int i=0;i<threadsCount;i++)
                 {
-                    futures << QtConcurrent::run([&,i]
+                    futures << QtConcurrent::run([&,instancesCount]
                     {
-                        qDebug() << "Running instance no." << i;
+                        qDebug() << "Running instance no." << instancesCount;
 
                         IRunnable* algorithm = nullptr;
                         switch (alg)
@@ -327,11 +359,13 @@ void go_go_go()
                             algorithm = new RandomWalk(inputData); break;
                         }
 
-                        algorithm->runAlg(1 * 1000);
+                        algorithm->runAlg(1000);
                         delete algorithm;
 
-                        qDebug() << "Instance" << i << "finished";
+                        //qDebug() << "Instance" << i << "finished";
                     });
+
+                    instancesCount++;
                 }
 
                 for(auto& future : futures)
