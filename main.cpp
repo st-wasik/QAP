@@ -290,19 +290,27 @@ void go_go_go()
     srand(static_cast<quint32>(time(nullptr)));
     randomPermutation(0, rand()); // set seed
 
-    QVector<QString> inputDatas{ "cleanedData/bur26d.dat2"
-//                               , "cleanedData/lipa30b.dat2"
-//                               , "cleanedData/esc32a.dat2"
-//                               , "cleanedData/lipa40a.dat2"
-//                               , "cleanedData/wil50.dat2"
-//                               , "cleanedData/lipa60a.dat2"
-//                               , "cleanedData/sko72.dat2"
-//                               , "cleanedData/sko81.dat2"
-//                               , "cleanedData/lipa90b.dat2"
-//                               , "cleanedData/tai100a.dat2"
-//                               , "cleanedData/sko100d.dat2"
-//                               , "cleanedData/tai150b.dat2"
-                               };
+        QVector<QString> inputDatas{
+//                                     "cleanedData/bur26d.dat2"
+//                                   , "cleanedData/lipa30b.dat2"
+//                                   , "cleanedData/esc32a.dat2"
+//                                   , "cleanedData/lipa40a.dat2"
+//                                   , "cleanedData/wil50.dat2"
+//                                   , "cleanedData/lipa60a.dat2"
+//                                   , "cleanedData/sko72.dat2"
+//                                   , "cleanedData/sko81.dat2"
+//                                   , "cleanedData/lipa90b.dat2"
+//                                   , "cleanedData/tai100a.dat2"
+//                                   , "cleanedData/sko100d.dat2"
+//                                   , "cleanedData/tai150b.dat2"
+
+                                    "cleanedData/tai100b.dat2"
+                                    , "cleanedData/sko100f.dat2"
+                                    , "cleanedData/wil100.dat2"
+                                    , "cleanedData/tho150.dat2"
+                                    , "cleanedData/tai256c.dat2"
+
+                                   };
 
     QVector<Algorithm> algorithms { Algorithm::Steepest
                                   , Algorithm::Greedy
@@ -314,7 +322,7 @@ void go_go_go()
     const auto threadsCount = QThread::idealThreadCount();
     // mechanizm: cołaska, minimum 50 złotych (xd)
     constexpr auto timeLimitMSec = 10 * 1000;
-    constexpr auto minimumRunsCount = 13;
+    constexpr auto minimumRunsCount = 35;
 
     QVector<QFuture<void>> futures;
 
@@ -383,12 +391,15 @@ int main()
 {
     srand(time(NULL));
 
-    auto inputData = QSharedPointer<Input>::create();
-    inputData->readFromFile("cleanedData/lipa80a.dat2");
+//    auto inputData = QSharedPointer<Input>::create();
+//    inputData->readFromFile("cleanedData/lipa80a.dat2");
 
-    Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
-    Matrix B{{5,3,1,55},{2,98,6,54},{38,66,1,12},{5,31,2,2}};
-    auto inputData2 = QSharedPointer<Input>::create(A,B);
+//    Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
+//    Matrix B{{5,3,1,55},{2,98,6,54},{38,66,1,12},{5,31,2,2}};
+//    auto inputData2 = QSharedPointer<Input>::create(A,B);
+
+    QElapsedTimer t;
+    t.start();
 
 //    costTest(inputData);
 
@@ -407,6 +418,8 @@ int main()
     GlobalOutput::getInstance().resetFileContent();
 
     go_go_go();
+
+    qDebug() << "Total time" << QTime::fromMSecsSinceStartOfDay(static_cast<int>(t.elapsed())).toString("HH:mm:ss.zzz");
 
     return 0;
 }
