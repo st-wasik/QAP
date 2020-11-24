@@ -289,7 +289,7 @@ QString algorithmToString(Algorithm alg)
     return QString();
 }
 
-void go_go_go()
+void main_test()
 {
     srand(static_cast<quint32>(time(nullptr)));
     randomPermutation(0, rand()); // set seed
@@ -337,7 +337,8 @@ void go_go_go()
 
     constexpr auto timeLimitMSec = 10 * 1000; // 10 * 1000;
     constexpr auto minimumRunsCount = 501;
-    const auto threadsCount = minimumRunsCount; // QThread::idealThreadCount();
+    const auto threadsCount = QThread::idealThreadCount();
+//    const auto threadsCount = minimumRunsCount;
 
     QVector<QFuture<void>> futures;
 
@@ -438,7 +439,7 @@ int main()
 
     GlobalOutput::getInstance().resetFileContent();
 
-    go_go_go();
+    main_test();
 
     qDebug() << "Total time" << QTime::fromMSecsSinceStartOfDay(static_cast<int>(t.elapsed())).toString("HH:mm:ss.zzz");
 
