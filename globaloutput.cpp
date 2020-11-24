@@ -1,4 +1,4 @@
-#include "globaloutput.hpp"
+#include "globaloutput.h"
 
 #include <QTextStream>
 

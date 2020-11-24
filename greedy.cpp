@@ -2,7 +2,7 @@
 #include "two_opt.h"
 
 #include <qelapsedtimer.h>
-#include "globaloutput.hpp"
+#include "globaloutput.h"
 
 Greedy::Greedy(QSharedPointer<const Input> inputData, int seed)
 {

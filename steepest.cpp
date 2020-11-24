@@ -1,5 +1,5 @@
 #include "cost.h"
-#include "globaloutput.hpp"
+#include "globaloutput.h"
 #include "steepest.h"
 #include "two_opt.h"
 

@@ -39,5 +39,5 @@ HEADERS += \
     randomwalk.h \
     heuristic.h \
     random.h \
-    globaloutput.hpp \
-    irunnable.hpp
+    irunnable.hpp \
+    globaloutput.h

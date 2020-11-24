@@ -15,7 +15,7 @@
 #include "randomwalk.h"
 #include "heuristic.h"
 #include "random.h"
-#include "globaloutput.hpp"
+#include "globaloutput.h"
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -71,7 +71,6 @@ void twoOptTest()
     while( (next = opt.next()) != nullptr )
     {
         i++;
-//        qDebug() << *next;
     }
     qDebug() << "Elapsed" << t.elapsed() << "msec" << "   Generated perms:" << i;
 }
@@ -243,7 +242,6 @@ void randomTest(QSharedPointer<const Input> inputData)
     srand(static_cast<quint32>(time(nullptr)));
 
     constexpr auto attempts = 125;
-
     constexpr auto randomTimeMSec = 50;
 
     auto random = QSharedPointer<Random>::create(inputData, rand());
@@ -276,11 +274,16 @@ QString algorithmToString(Algorithm alg)
 {
     switch(alg)
     {
-    case Algorithm::Steepest: return "Steepest";
-    case Algorithm::Greedy: return "Greedy";
-    case Algorithm::Heuristic: return "Heuristics";
-    case Algorithm::Random: return "Random";
-    case Algorithm::RandomWalk: return "RandomWalk";
+    case Algorithm::Steepest:
+        return "Steepest";
+    case Algorithm::Greedy:
+        return "Greedy";
+    case Algorithm::Heuristic:
+        return "Heuristics";
+    case Algorithm::Random:
+        return "Random";
+    case Algorithm::RandomWalk:
+        return "RandomWalk";
     }
 
     return QString();
@@ -291,59 +294,48 @@ void go_go_go()
     srand(static_cast<quint32>(time(nullptr)));
     randomPermutation(0, rand()); // set seed
 
-        QVector<QString> inputDatas{
-//                                     "cleanedData/bur26d.dat2"
-//                                   , "cleanedData/lipa30b.dat2"
-//                                   , "cleanedData/esc32a.dat2"
-//                                   , "cleanedData/lipa40a.dat2"
-//                                   , "cleanedData/wil50.dat2"
-//                                   , "cleanedData/lipa60a.dat2"
-//                                   , "cleanedData/sko72.dat2"
-//                                   , "cleanedData/sko81.dat2"
-//                                   , "cleanedData/lipa90b.dat2"
-//                                   , "cleanedData/tai100a.dat2"
-//                                   , "cleanedData/sko100d.dat2"
-//                                   , "cleanedData/tai150b.dat2"
-
-//                                   "cleanedData/tai100b.dat2"
-//                                   , "cleanedData/sko100f.dat2"
-//                                   , "cleanedData/wil100.dat2"
-//                                   , "cleanedData/tho150.dat2"
-//                                   , "cleanedData/tai256c.dat2"
-
-//            "cleanedData/nug12.dat2",
-//            "cleanedData/tai15b.dat2",
-//            "cleanedData/bur26f.dat2",
-//            "cleanedData/esc32b.dat2",
-//            "cleanedData/tho40.dat2",
-            "cleanedData/tai64c.dat2",
-//            "cleanedData/sko72.dat2",
-//            "cleanedData/lipa90a.dat2",
-//            "cleanedData/tai150b.dat2",
-
+        QVector<QString> inputDatas{"cleanedData/bur26d.dat2"
+                                   , "cleanedData/lipa30b.dat2"
+                                   , "cleanedData/esc32a.dat2"
+                                   , "cleanedData/lipa40a.dat2"
+                                   , "cleanedData/wil50.dat2"
+                                   , "cleanedData/lipa60a.dat2"
+                                   , "cleanedData/sko72.dat2"
+                                   , "cleanedData/sko81.dat2"
+                                   , "cleanedData/lipa90b.dat2"
+                                   , "cleanedData/tai100a.dat2"
+                                   , "cleanedData/sko100d.dat2"
+                                   , "cleanedData/tai150b.dat2"
+                                   , "cleanedData/tai100b.dat2"
+                                   , "cleanedData/sko100f.dat2"
+                                   , "cleanedData/wil100.dat2"
+                                   , "cleanedData/tho150.dat2"
+                                   , "cleanedData/tai256c.dat2"
+                                   , "cleanedData/nug12.dat2"
+                                   , "cleanedData/tai15b.dat2"
+                                   , "cleanedData/bur26f.dat2"
+                                   , "cleanedData/esc32b.dat2"
+                                   , "cleanedData/tho40.dat2"
+                                   , "cleanedData/tai64c.dat2"
+                                   , "cleanedData/sko72.dat2"
+                                   , "cleanedData/lipa90a.dat2"
+                                   , "cleanedData/tai150b.dat2"
                                    };
 
 //    QDir dir("cleanedData2/");
-
 //    dir.setFilter(QDir::Files);
-
 //    inputDatas = QVector<QString>(dir.entryList().toVector());
-
-
 //    for(auto& x:inputDatas)
 //        x = "cleanedData2/" + x;
 
-//    qDebug() << inputDatas;
-
     QVector<Algorithm> algorithms { Algorithm::Steepest
                                   , Algorithm::Greedy
-//                                  , Algorithm::Heuristic
-//                                  , Algorithm::Random
-//                                  , Algorithm::RandomWalk
+                                  , Algorithm::Heuristic
+                                  , Algorithm::Random
+                                  , Algorithm::RandomWalk
                                   };
 
-    // mechanizm: cołaska, minimum 50 złotych (xd)
-    constexpr auto timeLimitMSec = 0 * 3 * 1000; // 10 * 1000;
+    constexpr auto timeLimitMSec = 10 * 1000; // 10 * 1000;
     constexpr auto minimumRunsCount = 501;
     const auto threadsCount = minimumRunsCount; // QThread::idealThreadCount();
 
@@ -380,15 +372,20 @@ void go_go_go()
                         switch (alg)
                         {
                         case Algorithm::Greedy:
-                            algorithm = new Greedy(inputData); break;
+                            algorithm = new Greedy(inputData);
+                            break;
                         case Algorithm::Steepest:
-                            algorithm = new Steepest(inputData); break;
+                            algorithm = new Steepest(inputData);
+                            break;
                         case Algorithm::Heuristic:
-                            algorithm = new Heuristic(inputData, true); break;
+                            algorithm = new Heuristic(inputData, true);
+                            break;
                         case Algorithm::Random:
-                            algorithm = new Random(inputData); break;
+                            algorithm = new Random(inputData);
+                            break;
                         case Algorithm::RandomWalk:
-                            algorithm = new RandomWalk(inputData); break;
+                            algorithm = new RandomWalk(inputData);
+                            break;
                         }
 
                         algorithm->runAlg(1000);

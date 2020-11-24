@@ -1,7 +1,7 @@
 #include <random>
 
 #include "cost.h"
-#include "globaloutput.hpp"
+#include "globaloutput.h"
 #include "heuristic.h"
 #include "two_opt.h"
 
