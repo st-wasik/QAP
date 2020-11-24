@@ -17,6 +17,7 @@ QPair<long long, QVector<int>> Greedy::run()
 
     Cost cost(_inputData);
     cost.calculateCost(_solution);
+    const auto initialCost = cost.getCost();
     auto bestCost = cost.getCost();
 
     auto nextSolution = QSharedPointer<QVector<int>>::create(*_solution);
@@ -24,6 +25,11 @@ QPair<long long, QVector<int>> Greedy::run()
 
     int neighbor = 0, totalSteps = 0, betterFound = 0;
     long long updatedCost = 0;
+
+//    QStringList row;
+//    row << _inputData->getFilename() << "GREEDY" << QString::number(betterFound) << QString::number(bestCost);
+
+//    GlobalOutput::getInstance().write(row.join(","));
 
     while ((nextSolution = opt.next()) != nullptr)
     {
@@ -46,6 +52,12 @@ QPair<long long, QVector<int>> Greedy::run()
             opt.reset();
             betterFound++;
             neighbor = 0;
+
+//            QStringList row;
+//            row << _inputData->getFilename() << "GREEDY" << QString::number(betterFound) << QString::number(bestCost);
+
+//            GlobalOutput::getInstance().write(row.join(","));
+
             continue;
         }
     }
@@ -61,7 +73,9 @@ QPair<long long, QVector<int>> Greedy::run()
 //    qDebug() << QString(50, '*');
 
     QStringList row;
-    row << _inputData->getFilename() << "GREEDY" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/;
+//    row << _inputData->getFilename() << "GREEDY" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/ << QString::number(initialCost);
+
+    row << _inputData->getFilename() << "GREEDY" << QString::number(bestCost) << vectorToString(*_solution);
 
     GlobalOutput::getInstance().write(row.join(","));
 
@@ -70,5 +84,7 @@ QPair<long long, QVector<int>> Greedy::run()
 
 void Greedy::runAlg(int timeMSec)
 {
+    Q_UNUSED(timeMSec)
+
     run();
 }

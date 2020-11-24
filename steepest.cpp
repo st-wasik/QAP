@@ -19,12 +19,15 @@ QPair<long long, QVector<int> > Steepest::run()
     Cost cost(_inputData);
     cost.calculateCost(_solution);
     long long bestCost = cost.getCost();
-
-
-
+    const auto initialCost = cost.getCost();
 
     int neighbor = 0, totalSteps = 0, betterFound = 0;
     bool improvement = true;
+
+//    QStringList row;
+//    row << _inputData->getFilename() << "STEEPEST" << QString::number(betterFound) << QString::number(bestCost);
+
+//    GlobalOutput::getInstance().write(row.join(","));
 
     while(improvement)
     {
@@ -54,6 +57,11 @@ QPair<long long, QVector<int> > Steepest::run()
                 bestCost = updatedCost;
                 betterFound++;
                 improvement = true;
+
+//                QStringList row;
+//                row << _inputData->getFilename() << "STEEPEST" << QString::number(betterFound) << QString::number(bestCost);
+
+//                GlobalOutput::getInstance().write(row.join(","));
             }
         }
 
@@ -71,7 +79,8 @@ QPair<long long, QVector<int> > Steepest::run()
 //    qDebug() << QString(50, '*');
 
     QStringList row;
-    row << _inputData->getFilename() << "STEEPEST" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/;
+//    row << _inputData->getFilename() << "STEEPEST" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/ << QString::number(initialCost);
+    row << _inputData->getFilename() << "STEEPEST" << QString::number(bestCost) << vectorToString(*_solution );
 
     GlobalOutput::getInstance().write(row.join(","));
 
@@ -80,5 +89,7 @@ QPair<long long, QVector<int> > Steepest::run()
 
 void Steepest::runAlg(int timeMSec)
 {
+    Q_UNUSED(timeMSec)
+
     run();
 }

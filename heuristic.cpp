@@ -156,7 +156,7 @@ QPair<long long, QVector<int>> Heuristic::run(bool distancesDesc)
 //    qDebug() << QString(50, '*');
 
     QStringList row;
-    row << _inputData->getFilename() << "HEURISTICS" << QString::number(bestCost) << QString::number(elapsed) << QString::number(-1) /*jumps*/ << QString::number(-1) /*checked solutions*/;
+    row << _inputData->getFilename() << "HEURISTICS" << QString::number(bestCost) << QString::number(elapsed) << QString::number(-1) /*jumps*/ << QString::number(-1) /*checked solutions*/ << QString::number(-1);
 
     GlobalOutput::getInstance().write(row.join(","));
 
@@ -205,5 +205,7 @@ bool Heuristic::isMappingAvailable(QSharedPointer<QVector<int> > solution, QPair
 
 void Heuristic::runAlg(int timeMSec)
 {
+    Q_UNUSED(timeMSec)
+
     run();
 }

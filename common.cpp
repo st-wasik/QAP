@@ -37,3 +37,13 @@ int random(int n, int seed)
 
     return std::abs(static_cast<int>(randomGenerator())) % n;
 }
+
+QString vectorToString(const QVector<int>& v)
+{
+    QStringList res;
+
+    for(const auto& x : v)
+        res << QString::number(x);
+
+    return res.join(" ");
+}

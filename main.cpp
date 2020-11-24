@@ -4,6 +4,7 @@
 #include <QMutex>
 #include <QSet>
 #include <QFuture>
+#include <QDir>
 #include <QtConcurrent/QtConcurrentRun>
 
 #include "common.h"
@@ -304,25 +305,47 @@ void go_go_go()
 //                                   , "cleanedData/sko100d.dat2"
 //                                   , "cleanedData/tai150b.dat2"
 
-                                    "cleanedData/tai100b.dat2"
-                                    , "cleanedData/sko100f.dat2"
-                                    , "cleanedData/wil100.dat2"
-                                    , "cleanedData/tho150.dat2"
-                                    , "cleanedData/tai256c.dat2"
+//                                   "cleanedData/tai100b.dat2"
+//                                   , "cleanedData/sko100f.dat2"
+//                                   , "cleanedData/wil100.dat2"
+//                                   , "cleanedData/tho150.dat2"
+//                                   , "cleanedData/tai256c.dat2"
+
+//            "cleanedData/nug12.dat2",
+//            "cleanedData/tai15b.dat2",
+//            "cleanedData/bur26f.dat2",
+//            "cleanedData/esc32b.dat2",
+//            "cleanedData/tho40.dat2",
+            "cleanedData/tai64c.dat2",
+//            "cleanedData/sko72.dat2",
+//            "cleanedData/lipa90a.dat2",
+//            "cleanedData/tai150b.dat2",
 
                                    };
 
+//    QDir dir("cleanedData2/");
+
+//    dir.setFilter(QDir::Files);
+
+//    inputDatas = QVector<QString>(dir.entryList().toVector());
+
+
+//    for(auto& x:inputDatas)
+//        x = "cleanedData2/" + x;
+
+//    qDebug() << inputDatas;
+
     QVector<Algorithm> algorithms { Algorithm::Steepest
                                   , Algorithm::Greedy
-                                  , Algorithm::Heuristic
-                                  , Algorithm::Random
-                                  , Algorithm::RandomWalk
+//                                  , Algorithm::Heuristic
+//                                  , Algorithm::Random
+//                                  , Algorithm::RandomWalk
                                   };
 
-    const auto threadsCount = QThread::idealThreadCount();
     // mechanizm: cołaska, minimum 50 złotych (xd)
-    constexpr auto timeLimitMSec = 10 * 1000;
-    constexpr auto minimumRunsCount = 35;
+    constexpr auto timeLimitMSec = 0 * 3 * 1000; // 10 * 1000;
+    constexpr auto minimumRunsCount = 501;
+    const auto threadsCount = minimumRunsCount; // QThread::idealThreadCount();
 
     QVector<QFuture<void>> futures;
 
@@ -350,7 +373,8 @@ void go_go_go()
                 {
                     futures << QtConcurrent::run([&,instancesCount]
                     {
-                        qDebug() << "Running instance no." << instancesCount;
+//                        if(instancesCount % 50 == 0)
+                            qDebug() << "Running instance no." << instancesCount;
 
                         IRunnable* algorithm = nullptr;
                         switch (alg)

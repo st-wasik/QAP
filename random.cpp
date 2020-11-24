@@ -54,7 +54,7 @@ QPair<long long, QVector<int>> Random::run(long timeLimitMSec)
 //    qDebug() << QString(50, '*');
 
     QStringList row;
-    row << _inputData->getFilename() << "RANDOM" << QString::number(bestCost) << QString::number(elapsed) << QString::number(-1) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/;
+    row << _inputData->getFilename() << "RANDOM" << QString::number(bestCost) << QString::number(elapsed) << QString::number(-1) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/ << QString::number(-1);
 
     GlobalOutput::getInstance().write(row.join(","));
 

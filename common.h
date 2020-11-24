@@ -13,4 +13,6 @@ int newton2(int n);
 
 int random(int n, int seed=42);
 
+QString vectorToString(const QVector<int>& v);
+
 #endif // COMMON_H
