@@ -17,6 +17,7 @@
 #include "random.h"
 #include "globaloutput.h"
 #include "tabu.hpp"
+#include "annealing.h"
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -301,6 +302,53 @@ void tabuTest(QSharedPointer<const Input> inputData)
     qDebug() << QString(50, '*');
 }
 
+void annealingTest(QSharedPointer<const Input> inputData)
+{
+    QElapsedTimer t;
+    t.start();
+
+    srand(static_cast<quint32>(time(nullptr)));
+    randomPermutation(0, rand()); // set seed
+
+    constexpr auto attempts = 100;
+
+    QMutex mutex;
+    auto best = QSharedPointer<Annealing>::create(inputData)->run();
+
+    QVector<QFuture<void>> futures;
+
+    for(int i=1;i<attempts;i++)
+    {
+        futures << QtConcurrent::run([&,i]
+        {
+            qDebug() << "Running instance no." << i;
+
+            auto annealing = QSharedPointer<Annealing>::create(inputData);
+            auto result = annealing->run();
+
+            qDebug() << "Instance" << i << "finished";
+
+            QMutexLocker lock(&mutex);
+            if(result.first < best.first)
+            {
+                best.first = result.first;
+                best.second = result.second;
+            }
+        });
+    }
+
+    for(auto& future : futures)
+        future.waitForFinished();
+
+    qDebug() << "";
+    qDebug() << QString(50, '*');
+    qDebug() << "BEST SOLUTION";
+    qDebug() << "Solution:" << best.second;
+    qDebug() << "Best cost" << best.first;
+    qDebug() << QString(50, '*');
+    qDebug() << "Total time" << t.elapsed() << "msec";
+}
+
 enum class Algorithm {Steepest = 1, Greedy = 2, Heuristic = 4, Random = 8, RandomWalk = 16};
 
 QString algorithmToString(Algorithm alg)
@@ -474,7 +522,9 @@ int main()
 
 //    main_test();
 
-    tabuTest(inputData);
+//    tabuTest(inputData);
+
+    annealingTest(inputData);
 
     qDebug() << "Total time" << QTime::fromMSecsSinceStartOfDay(static_cast<int>(t.elapsed())).toString("HH:mm:ss.zzz");
 
