@@ -84,7 +84,7 @@ void greedyTest(QSharedPointer<const Input> inputData)
     srand(static_cast<quint32>(time(nullptr)));
     randomPermutation(0, rand()); // set seed
 
-    constexpr auto attempts = 100;
+    constexpr auto attempts = 25;
 
     QMutex mutex;
     auto best = QSharedPointer<Greedy>::create(inputData)->run();
@@ -248,6 +248,7 @@ void randomTest(QSharedPointer<const Input> inputData)
     auto random = QSharedPointer<Random>::create(inputData, rand());
     auto best = random->run(randomTimeMSec);
 
+
     for(int i=1;i<attempts;i++)
     {
         random = QSharedPointer<Random>::create(inputData, rand());
@@ -274,24 +275,42 @@ void tabuTest(QSharedPointer<const Input> inputData)
 {
     srand(static_cast<quint32>(time(nullptr)));
 
-    constexpr auto attempts = 100;
-    constexpr auto randomTimeMSec = 100;
+    constexpr auto attempts = 9;
+    const auto tabuStepsLimit = std::min(1, 2 * newton2(inputData->getDimension()) / 4);
 
-    auto alg = QSharedPointer<Tabu>::create(inputData);
-    auto best = alg->run(randomTimeMSec, 10);
+    qDebug() << QDateTime::currentDateTime() << "Running instance no." << 0;
+
+    auto alg = QSharedPointer<Tabu>::create(inputData, rand());
+    auto best = alg->run(tabuStepsLimit);
+
+    qDebug() << QDateTime::currentDateTime() << "Instance" << 0 << "finished";
+    QVector<QFuture<void>> futures;
+
+    QMutex mutex;
 
     for(int i=1;i<attempts;i++)
     {
-        alg = QSharedPointer<Tabu>::create(inputData);
-
-        auto result = alg->run(randomTimeMSec, 10);
-
-        if(result.first < best.first)
+        futures << QtConcurrent::run([&,i]
         {
-            best.first = result.first;
-            best.second = result.second;
-        }
+            qDebug() << QDateTime::currentDateTime() << "Running instance no." << i;
+
+            auto alg = QSharedPointer<Tabu>::create(inputData, rand());
+
+            auto result = alg->run(tabuStepsLimit);
+
+            qDebug() << QDateTime::currentDateTime() << "Instance" << i << "finished";
+
+            QMutexLocker lock(&mutex);
+            if(result.first < best.first)
+            {
+                best.first = result.first;
+                best.second = result.second;
+            }
+        });
     }
+
+    for(auto& future : futures)
+        future.waitForFinished();
 
     qDebug() << "";
     qDebug() << QString(50, '*');
@@ -447,7 +466,9 @@ int main()
     srand(time(NULL));
 
     auto inputData = QSharedPointer<Input>::create();
+//    inputData->readFromFile("cleanedData/chr12a.dat2");
     inputData->readFromFile("cleanedData/lipa80a.dat2");
+
 
 //    Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
 //    Matrix B{{5,3,1,55},{2,98,6,54},{38,66,1,12},{5,31,2,2}};
@@ -460,7 +481,7 @@ int main()
 
 //    twoOptTest();
 
-//    greedyTest(inputData);
+    greedyTest(inputData);
 
 //    steepestTest(inputData);
 
