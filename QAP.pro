@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     heuristic.cpp \
     random.cpp \
     globaloutput.cpp \
-    irunnable.cpp
+    irunnable.cpp \
+    tabu.cpp
 
 HEADERS += \
     two_opt.h \
@@ -40,4 +41,5 @@ HEADERS += \
     heuristic.h \
     random.h \
     irunnable.hpp \
-    globaloutput.h
+    globaloutput.h \
+    tabu.hpp

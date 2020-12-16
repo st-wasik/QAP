@@ -16,6 +16,7 @@
 #include "heuristic.h"
 #include "random.h"
 #include "globaloutput.h"
+#include "tabu.hpp"
 
 void costTest(QSharedPointer<const Input> inputData)
 {
@@ -83,7 +84,7 @@ void greedyTest(QSharedPointer<const Input> inputData)
     srand(static_cast<quint32>(time(nullptr)));
     randomPermutation(0, rand()); // set seed
 
-    constexpr auto attempts = 5000;
+    constexpr auto attempts = 100;
 
     QMutex mutex;
     auto best = QSharedPointer<Greedy>::create(inputData)->run();
@@ -126,7 +127,7 @@ void steepestTest(QSharedPointer<const Input> inputData)
 {
     srand(static_cast<quint32>(time(nullptr)));
 
-    constexpr auto attempts = 125;
+    constexpr auto attempts = 100;
 
     auto steepest = QSharedPointer<Steepest>::create(inputData, rand());
     auto best = steepest->run();
@@ -252,6 +253,38 @@ void randomTest(QSharedPointer<const Input> inputData)
         random = QSharedPointer<Random>::create(inputData, rand());
 
         auto result = random->run(randomTimeMSec);
+
+        if(result.first < best.first)
+        {
+            best.first = result.first;
+            best.second = result.second;
+        }
+    }
+
+    qDebug() << "";
+    qDebug() << QString(50, '*');
+    qDebug() << "BEST SOLUTION";
+    qDebug() << "Solution:" << best.second;
+    qDebug() << "Best cost" << best.first;
+    qDebug() << QString(50, '*');
+}
+
+
+void tabuTest(QSharedPointer<const Input> inputData)
+{
+    srand(static_cast<quint32>(time(nullptr)));
+
+    constexpr auto attempts = 100;
+    constexpr auto randomTimeMSec = 100;
+
+    auto alg = QSharedPointer<Tabu>::create(inputData);
+    auto best = alg->run(randomTimeMSec, 10);
+
+    for(int i=1;i<attempts;i++)
+    {
+        alg = QSharedPointer<Tabu>::create(inputData);
+
+        auto result = alg->run(randomTimeMSec, 10);
 
         if(result.first < best.first)
         {
@@ -413,8 +446,8 @@ int main()
 {
     srand(time(NULL));
 
-//    auto inputData = QSharedPointer<Input>::create();
-//    inputData->readFromFile("cleanedData/lipa80a.dat2");
+    auto inputData = QSharedPointer<Input>::create();
+    inputData->readFromFile("cleanedData/lipa80a.dat2");
 
 //    Matrix A{{1,2,3,5},{4,5,6,2},{7,8,9,1},{5,5,2,7}};
 //    Matrix B{{5,3,1,55},{2,98,6,54},{38,66,1,12},{5,31,2,2}};
@@ -429,7 +462,7 @@ int main()
 
 //    greedyTest(inputData);
 
-//    steepestTest(inputData2);
+//    steepestTest(inputData);
 
 //    randomWalkTest(inputData);
 
@@ -437,9 +470,11 @@ int main()
 
 //    randomTest(inputData);
 
-    GlobalOutput::getInstance().resetFileContent();
+//    GlobalOutput::getInstance().resetFileContent();
 
-    main_test();
+//    main_test();
+
+    tabuTest(inputData);
 
     qDebug() << "Total time" << QTime::fromMSecsSinceStartOfDay(static_cast<int>(t.elapsed())).toString("HH:mm:ss.zzz");
 
