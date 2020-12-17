@@ -11,6 +11,7 @@
 #define ALPHA 0.9
 #define STOP_CONSTANT 10
 #define LANDSCAPE_SCAN_SIZE 1000
+#define P 0.99
 
 Annealing::Annealing(QSharedPointer<const Input> inputData, int seed) {
     _inputData = inputData;
@@ -38,6 +39,13 @@ QPair<long long, QVector<int>> Annealing::run() {
 
     while (temperature > MINIMAL_TEMP) {
         for (int i=0; i < _stepLenght; i++) {
+            // Generate neighbours for whole temperature step
+            nextSolution = opt.next();
+            if (nextSolution == nullptr) {
+                opt.reset();
+                nextSolution = opt.next();
+            }
+
             updatedCost = cost.getUpdatedCost(nextSolution, opt.getI(), opt.getJ());
 
             // If neighbour is better than move to it
@@ -52,8 +60,8 @@ QPair<long long, QVector<int>> Annealing::run() {
             }
 
             // If neighbour is worse than there is chance to move to it
-            double excitation = exp((currentCost - updatedCost)/temperature);
-            if (excitation > ((double) rand() / RAND_MAX) + 1) {
+            double excitation = exp(-(currentCost - updatedCost)/temperature);
+            if (excitation > ((double) rand() / RAND_MAX)) {
                 *_solution = *nextSolution;
                 currentCost = updatedCost;
                 cost.setCost(updatedCost);
@@ -81,10 +89,7 @@ QPair<long long, QVector<int>> Annealing::run() {
 
 float Annealing::_getInitialTemp() {
     float delta = _scanLandscape();
-    // temp = -(delta/log(0.99));
-    // assert(temp > 0.0);
-    // return temp;
-    return 20.0;
+    return -(delta/log(P));
 }
 
 int Annealing::_getStepLenght(int n) {
@@ -96,8 +101,9 @@ float Annealing::_scanLandscape() {
     int dim = _inputData->getDimension();
     Cost cost(_inputData);
 
-    long long updatedCost = 0;
-    QSharedPointer<QVector<int>> randomSolution;
+    long long neighbourCost = 0;
+    QSharedPointer<QVector<int>> randomSolution = randomPermutation(dim);
+    Two_OPT opt(randomSolution->count(), randomSolution);
 
     // Probe landscape LANDSCAPE_SCAN_SIZE times
     for (int i=0; i < LANDSCAPE_SCAN_SIZE; i++) {
@@ -105,9 +111,12 @@ float Annealing::_scanLandscape() {
         cost.calculateCost(randomSolution);
         float solutionCost = cost.getCost();
 
-        // Neighbour cost
-        // sum += abs(neigbourCost - solutionCost)
+        opt.random();
+        auto neighbour = opt.next();
+        neighbourCost = cost.getUpdatedCost(neighbour, opt.getI(), opt.getJ());
+
+        sum += abs(solutionCost - neighbourCost);
     }
 
-    return sum;
+    return sum / LANDSCAPE_SCAN_SIZE;
 }

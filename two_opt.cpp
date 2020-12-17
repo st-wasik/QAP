@@ -49,3 +49,10 @@ QSharedPointer<QVector<int>> Two_OPT::next()
 
     return _solution;
 }
+
+void Two_OPT::random() {
+    i = (rand() % _dim - 1) + 1;
+    do {
+        j = (rand() % (_dim - 2)) + 1;
+    } while (i == j);
+}

@@ -11,6 +11,7 @@ public:
     void reset();
     int getI();
     int getJ();
+    void random();
 
 private:
     int _dim, i, j;
