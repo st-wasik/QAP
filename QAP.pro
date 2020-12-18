@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     random.cpp \
     globaloutput.cpp \
     irunnable.cpp \
-    tabu.cpp
+    tabu.cpp \
+    annealing.cpp
 
 HEADERS += \
     two_opt.h \
@@ -42,4 +43,5 @@ HEADERS += \
     random.h \
     irunnable.hpp \
     globaloutput.h \
-    tabu.hpp
+    tabu.hpp \
+    annealing.h
