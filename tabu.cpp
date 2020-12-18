@@ -32,9 +32,13 @@ QPair<long long, QVector<int>> Tabu::run(int limit)
     Cost cost(_inputData);
     cost.calculateCost(_solution);
 
+    const long long initialCost = cost.getCost();
     long long bestCost = cost.getCost();
     long long currentCost = cost.getCost();
     auto bestSolution = QSharedPointer<QVector<int>>::create(*_solution);
+
+    int jumps = 0;
+    int checkedSols = 0;
 
     QVector<QPair<long long, QPair<int, int>>> movesCost;
 
@@ -65,6 +69,7 @@ QPair<long long, QVector<int>> Tabu::run(int limit)
         for(int i=0; i < n; ++i)
         {
             const auto mc = movesCost[i];
+            checkedSols++;
 
             std::swap((*_solution)[mc.second.first], (*_solution)[mc.second.second]);
 //            bool moveAllowed = _tabu[mc.second.first][mc.second.second] == 0;
@@ -78,6 +83,7 @@ QPair<long long, QVector<int>> Tabu::run(int limit)
 //                _tabu[mc.second.first][mc.second.second] = cadency;
                 currentCost = currentCost + mc.first;
                 cost.setCost(currentCost);
+                jumps++;
                 break;
             }
         }
@@ -93,6 +99,13 @@ QPair<long long, QVector<int>> Tabu::run(int limit)
             stepsWithoutBetterSolution++;
         }
     }
+
+    const auto elapsed = t.elapsed();
+
+    QStringList row;
+    row << _inputData->getFilename() << "TABU" << QString::number(bestCost) << QString::number(elapsed) << QString::number(jumps) /*jumps*/ << QString::number(checkedSols) /*checked solutions*/ << QString::number(initialCost);
+
+    GlobalOutput::getInstance().write(row.join(","));
 
     return QPair<long long, QVector<int>>{bestCost, *bestSolution};
 }

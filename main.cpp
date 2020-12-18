@@ -346,24 +346,24 @@ void main_test()
     srand(static_cast<quint32>(time(nullptr)));
     randomPermutation(0, rand()); // set seed
 
-        QVector<QString> inputDatas{"cleanedData/bur26d.dat2"
-                                   , "cleanedData/lipa30b.dat2"
-                                   , "cleanedData/esc32a.dat2"
-                                   , "cleanedData/lipa40a.dat2"
-                                   , "cleanedData/wil50.dat2"
-                                   , "cleanedData/lipa60a.dat2"
-                                   , "cleanedData/sko72.dat2"
-                                   , "cleanedData/sko81.dat2"
-                                   , "cleanedData/lipa90b.dat2"
-                                   , "cleanedData/tai100a.dat2"
-                                   , "cleanedData/sko100d.dat2"
-                                   , "cleanedData/tai150b.dat2"
-                                   , "cleanedData/tai100b.dat2"
-                                   , "cleanedData/sko100f.dat2"
-                                   , "cleanedData/wil100.dat2"
-                                   , "cleanedData/tho150.dat2"
-                                   , "cleanedData/tai256c.dat2"
-                                   , "cleanedData/nug12.dat2"
+        QVector<QString> inputDatas{ // "cleanedData/bur26d.dat2"
+//                                   , "cleanedData/lipa30b.dat2"
+//                                   , "cleanedData/esc32a.dat2"
+//                                   , "cleanedData/lipa40a.dat2"
+//                                   , "cleanedData/wil50.dat2"
+//                                   , "cleanedData/lipa60a.dat2"
+//                                   , "cleanedData/sko72.dat2"
+//                                   , "cleanedData/sko81.dat2"
+//                                   , "cleanedData/lipa90b.dat2"
+//                                   , "cleanedData/tai100a.dat2"
+//                                   , "cleanedData/sko100d.dat2"
+//                                   , "cleanedData/tai150b.dat2"
+//                                   , "cleanedData/tai100b.dat2"
+//                                   , "cleanedData/sko100f.dat2"
+//                                   , "cleanedData/wil100.dat2"
+//                                   , "cleanedData/tho150.dat2"
+//                                   , "cleanedData/tai256c.dat2"
+                                   "cleanedData/nug12.dat2"
                                    , "cleanedData/tai15b.dat2"
                                    , "cleanedData/bur26f.dat2"
                                    , "cleanedData/esc32b.dat2"
@@ -374,26 +374,40 @@ void main_test()
                                    , "cleanedData/tai150b.dat2"
                                    };
 
+        QVector<int> timesMSec {
+            1,
+            1,
+            10,
+            10,
+            80,
+            100,
+            900,
+            1000,
+            10000
+        };
+
 //    QDir dir("cleanedData2/");
 //    dir.setFilter(QDir::Files);
 //    inputDatas = QVector<QString>(dir.entryList().toVector());
 //    for(auto& x:inputDatas)
 //        x = "cleanedData2/" + x;
 
-    QVector<Algorithm> algorithms { Algorithm::Steepest
-                                  , Algorithm::Greedy
-                                  , Algorithm::Heuristic
-                                  , Algorithm::Random
+    QVector<Algorithm> algorithms {
+//                                    Algorithm::Steepest
+//                                  , Algorithm::Greedy
+//                                  , Algorithm::Heuristic
+                                   Algorithm::Random
                                   , Algorithm::RandomWalk
                                   };
 
-    constexpr auto timeLimitMSec = 10 * 1000; // 10 * 1000;
-    constexpr auto minimumRunsCount = 501;
-    const auto threadsCount = QThread::idealThreadCount();
-//    const auto threadsCount = minimumRunsCount;
+    constexpr auto timeLimitMSec = 0; // 10 * 1000;
+    constexpr auto minimumRunsCount = 21;
+//    const auto threadsCount = QThread::idealThreadCount();
+    const auto threadsCount = minimumRunsCount;
 
     QVector<QFuture<void>> futures;
 
+    int inputDataIndex = 0;
     for(const auto& dataFile : inputDatas)
     {
         auto inputData = QSharedPointer<Input>::create();
@@ -441,7 +455,7 @@ void main_test()
                             break;
                         }
 
-                        algorithm->runAlg(1000);
+                        algorithm->runAlg(timesMSec[inputDataIndex]);
                         delete algorithm;
 
                         //qDebug() << "Instance" << i << "finished";
@@ -458,6 +472,8 @@ void main_test()
                 futures.clear();
             }
         }
+
+        inputDataIndex++;
     }
 }
 
@@ -481,7 +497,7 @@ int main()
 
 //    twoOptTest();
 
-    greedyTest(inputData);
+//    greedyTest(inputData);
 
 //    steepestTest(inputData);
 
@@ -491,11 +507,11 @@ int main()
 
 //    randomTest(inputData);
 
-//    GlobalOutput::getInstance().resetFileContent();
+    GlobalOutput::getInstance().resetFileContent();
 
-//    main_test();
+    main_test();
 
-    tabuTest(inputData);
+//    tabuTest(inputData);
 
     qDebug() << "Total time" << QTime::fromMSecsSinceStartOfDay(static_cast<int>(t.elapsed())).toString("HH:mm:ss.zzz");
 
