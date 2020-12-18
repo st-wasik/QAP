@@ -368,7 +368,7 @@ void annealingTest(QSharedPointer<const Input> inputData)
     qDebug() << "Total time" << t.elapsed() << "msec";
 }
 
-enum class Algorithm {Steepest = 1, Greedy = 2, Heuristic = 4, Random = 8, RandomWalk = 16};
+enum class Algorithm {Steepest = 1, Greedy = 2, Heuristic = 4, Random = 8, RandomWalk = 16, Annealing = 32, Tabu = 64};
 
 QString algorithmToString(Algorithm alg)
 {
@@ -384,6 +384,10 @@ QString algorithmToString(Algorithm alg)
         return "Random";
     case Algorithm::RandomWalk:
         return "RandomWalk";
+    case Algorithm::Annealing:
+        return "Annealing";
+    case Algorithm::Tabu:
+        return "Tabu";
     }
 
     return QString();
@@ -422,17 +426,17 @@ void main_test()
                                    , "cleanedData/tai150b.dat2"
                                    };
 
-        QVector<int> timesMSec {
-            1,
-            1,
-            10,
-            10,
-            80,
-            100,
-            900,
-            1000,
-            10000
-        };
+//        QVector<int> timesMSec {
+//            1,
+//            1,
+//            10,
+//            10,
+//            80,
+//            100,
+//            900,
+//            1000,
+//            10000
+//        };
 
 //    QDir dir("cleanedData2/");
 //    dir.setFilter(QDir::Files);
@@ -444,12 +448,14 @@ void main_test()
 //                                    Algorithm::Steepest
 //                                  , Algorithm::Greedy
 //                                  , Algorithm::Heuristic
-                                   Algorithm::Random
-                                  , Algorithm::RandomWalk
+//                                   Algorithm::Random
+//                                  , Algorithm::RandomWalk
+                                    Algorithm::Annealing,
+                                    Algorithm::Tabu
                                   };
 
     constexpr auto timeLimitMSec = 0; // 10 * 1000;
-    constexpr auto minimumRunsCount = 21;
+    constexpr auto minimumRunsCount = 2 * 15;
 //    const auto threadsCount = QThread::idealThreadCount();
     const auto threadsCount = minimumRunsCount;
 
@@ -501,9 +507,16 @@ void main_test()
                         case Algorithm::RandomWalk:
                             algorithm = new RandomWalk(inputData);
                             break;
+                        case Algorithm::Annealing:
+                            algorithm = new Annealing(inputData);
+                            break;
+                        case Algorithm::Tabu:
+                            algorithm = new Tabu(inputData);
+                            break;
                         }
 
-                        algorithm->runAlg(timesMSec[inputDataIndex]);
+//                        algorithm->runAlg(timesMSec[inputDataIndex]);
+                        algorithm->runAlg(100);
                         delete algorithm;
 
                         //qDebug() << "Instance" << i << "finished";
@@ -561,7 +574,7 @@ int main()
 
 //    tabuTest(inputData);
 
-    annealingTest(inputData);
+//    annealingTest(inputData);
 
     qDebug() << "Total time" << QTime::fromMSecsSinceStartOfDay(static_cast<int>(t.elapsed())).toString("HH:mm:ss.zzz");
 

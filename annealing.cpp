@@ -27,10 +27,14 @@ QPair<long long, QVector<int>> Annealing::run() {
     Cost cost(_inputData);
     cost.calculateCost(_solution);
 
-    long long currentCost = cost.getCost();
+    int jumps=0, checkedSols=0;
 
     auto nextSolution = QSharedPointer<QVector<int>>::create(*_solution);
+    QSharedPointer<QVector<int>> tempSol;
     Two_OPT opt(nextSolution->count(), nextSolution);
+
+    const long long initCost = cost.getCost();
+    long long currentCost = cost.getCost();
 
     long long updatedCost = 0;
 
@@ -38,15 +42,20 @@ QPair<long long, QVector<int>> Annealing::run() {
     int noImprovemnt = 0;
 
     while (temperature > MINIMAL_TEMP) {
+
         for (int i=0; i < _stepLenght; i++) {
             // Generate neighbours for whole temperature step
-            nextSolution = opt.next();
-            if (nextSolution == nullptr) {
+            tempSol = opt.next();
+            if (tempSol == nullptr) {
                 opt.reset();
-                nextSolution = opt.next();
+                tempSol = opt.next();
             }
 
-            updatedCost = cost.getUpdatedCost(nextSolution, opt.getI(), opt.getJ());
+            *nextSolution = *tempSol;
+
+            checkedSols++;
+
+            updatedCost = cost.getUpdatedCost(tempSol, opt.getI(), opt.getJ());
 
             // If neighbour is better than move to it
             if (updatedCost < currentCost) {
@@ -56,6 +65,7 @@ QPair<long long, QVector<int>> Annealing::run() {
                 opt.reset();
 
                 noImprovemnt = 0;
+                jumps++;
                 continue;
             }
 
@@ -65,6 +75,7 @@ QPair<long long, QVector<int>> Annealing::run() {
                 *_solution = *nextSolution;
                 currentCost = updatedCost;
                 cost.setCost(updatedCost);
+                jumps++;
                 opt.reset();
             }
 
@@ -80,8 +91,9 @@ QPair<long long, QVector<int>> Annealing::run() {
     }
 
     auto elapsed = t.elapsed();
+
     QStringList row;
-    row << _inputData->getFilename() << "ANNEALING" << QString::number(currentCost) << vectorToString(*_solution);
+    row << _inputData->getFilename() << "ANNEALING" << QString::number(currentCost) << QString::number(elapsed) << QString::number(jumps) /*jumps*/ << QString::number(checkedSols) /*checked solutions*/ << QString::number(initCost);
     GlobalOutput::getInstance().write(row.join(","));
 
     return QPair<long long, QVector<int>>{currentCost, *_solution};
@@ -95,6 +107,11 @@ float Annealing::_getInitialTemp() {
 int Annealing::_getStepLenght(int n) {
 //    return (int)(pow(n, 2) * STEP_CONSTANT);
     return (int)(((n*(n-1))/2) * STEP_CONSTANT);
+}
+
+void Annealing::runAlg(int timeMSec)
+{
+    run();
 }
 
 float Annealing::_scanLandscape() {

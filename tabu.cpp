@@ -44,21 +44,23 @@ QPair<long long, QVector<int>> Tabu::run(int limit)
 
     int stepsWithoutBetterSolution = 0;
 
+    auto nextSolution = QSharedPointer<QVector<int>>::create(*_solution);
+    QSharedPointer<QVector<int>> tempSol;
+    Two_OPT opt(nextSolution->count(), nextSolution);
+
     while(stepsWithoutBetterSolution < limit)
     {
 //        for(int i=0;i<_tabu.size();++i)
 //            for(int j=i+1;j<_tabu.size();++j)
 //                _tabu[i][j] = std::max(0, _tabu[i][j]-1);
 
-        auto nextSolution = QSharedPointer<QVector<int>>::create(*_solution);
-        Two_OPT opt(nextSolution->count(), nextSolution);
-
         movesCost.clear();
         movesCost.reserve(newton2(nextSolution->count()));
 
-        while ((nextSolution = opt.next()) != nullptr)
+
+        while ((tempSol = opt.next()) != nullptr)
         {
-            auto updatedCost = cost.getUpdatedCost(nextSolution, opt.getI(), opt.getJ());
+            auto updatedCost = cost.getUpdatedCost(tempSol, opt.getI(), opt.getJ());
 
             movesCost.append({updatedCost - currentCost, {opt.getI(), opt.getJ()}});
         }
@@ -79,6 +81,8 @@ QPair<long long, QVector<int>> Tabu::run(int limit)
             if(moveAllowed || (!moveAllowed && (mc.first + currentCost) < bestCost) || i == (n-1))
             {
                 std::swap((*_solution)[mc.second.first], (*_solution)[mc.second.second]);
+                *nextSolution = *_solution;
+                opt.reset();
                 _tabuQueue->append((*_solution));
 //                _tabu[mc.second.first][mc.second.second] = cadency;
                 currentCost = currentCost + mc.first;

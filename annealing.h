@@ -2,9 +2,10 @@
 #define ANNEALING_H
 
 #include "input.h"
+#include "irunnable.hpp"
 #include <QSharedPointer>
 
-class Annealing
+class Annealing : public IRunnable
 {
 public:
     Annealing(QSharedPointer<const Input> inputData, int seed=42);
@@ -20,6 +21,10 @@ private:
     float _scanLandscape();
     float _getInitialTemp();
     int _getStepLenght(int n);
+
+    // IRunnable interface
+public:
+    void runAlg(int timeMSec);
 };
 
 #endif // ANNEALING_H
