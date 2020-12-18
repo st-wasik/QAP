@@ -10,7 +10,7 @@
 #define MINIMAL_TEMP 0.01
 #define ALPHA 0.9
 #define STOP_CONSTANT 10
-#define LANDSCAPE_SCAN_SIZE 1000
+#define LANDSCAPE_SCAN_SIZE 10000
 #define P 0.99
 
 Annealing::Annealing(QSharedPointer<const Input> inputData, int seed) {
@@ -59,8 +59,8 @@ QPair<long long, QVector<int>> Annealing::run() {
                 continue;
             }
 
-            // If neighbour is worse than there is chance to move to it
-            double excitation = exp(-(currentCost - updatedCost)/temperature);
+            // If neighbour is worse than there is a chance to move to it
+            double excitation = exp(-(updatedCost - currentCost)/temperature);
             if (excitation > ((double) rand() / RAND_MAX)) {
                 *_solution = *nextSolution;
                 currentCost = updatedCost;
@@ -93,7 +93,8 @@ float Annealing::_getInitialTemp() {
 }
 
 int Annealing::_getStepLenght(int n) {
-    return (int)(pow(n, 2) * STEP_CONSTANT);
+//    return (int)(pow(n, 2) * STEP_CONSTANT);
+    return (int)(((n*(n-1))/2) * STEP_CONSTANT);
 }
 
 float Annealing::_scanLandscape() {
