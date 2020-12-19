@@ -11,6 +11,7 @@ public:
     Annealing(QSharedPointer<const Input> inputData, int seed=42);
 
     QPair<long long, QVector<int>> run();
+    long long getBestCost();
 
 private:
     QSharedPointer<QVector<int>> _solution;
@@ -21,6 +22,8 @@ private:
     float _scanLandscape();
     float _getInitialTemp();
     int _getStepLenght(int n);
+
+    long long _AllTimeBestCost;
 
     // IRunnable interface
 public:

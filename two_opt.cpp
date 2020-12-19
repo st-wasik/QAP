@@ -23,12 +23,10 @@ int Two_OPT::getJ()
     return j;
 }
 
-QSharedPointer<QVector<int>> Two_OPT::next()
+QSharedPointer<QVector<int>> Two_OPT::next(bool swapBack)
 {
-    if(!(i == 0 && j == 0))
-    {
-        // swap solution back to state before previous 'next' call
-        std::swap((*_solution)[i], (*_solution)[j]);
+    if (swapBack) {
+        doSwapBack();
     }
 
     j++;
@@ -56,3 +54,12 @@ void Two_OPT::random() {
         j = (rand() % (_dim - 2)) + 1;
     } while (i == j);
 }
+
+void Two_OPT::doSwapBack() {
+    if(!(i == 0 && j == 0))
+        {
+            // swap solution back to state before previous 'next' call
+            std::swap((*_solution)[i], (*_solution)[j]);
+        }
+}
+

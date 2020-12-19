@@ -6,7 +6,7 @@
 #include <QVector>
 #include <math.h>
 
-#define STEP_CONSTANT 1
+#define STEP_CONSTANT 1.2
 #define MINIMAL_TEMP 0.01
 #define ALPHA 0.9
 #define STOP_CONSTANT 10
@@ -17,10 +17,10 @@ Annealing::Annealing(QSharedPointer<const Input> inputData, int seed) {
     _inputData = inputData;
     _solution = randomPermutation(inputData->getDimension(), seed);
     _initialTemp = _getInitialTemp();
-    _stepLenght = _getStepLenght(inputData->getDimension());
+    _stepLenght = _getStepLenght(inputData->getDimension());  
 }
 
-QPair<long long, QVector<int>> Annealing::run() {
+QPair<long long, QVector<int>> Annealing::run() {   
     QElapsedTimer t;
     t.start();
 
@@ -41,15 +41,18 @@ QPair<long long, QVector<int>> Annealing::run() {
     float temperature = _initialTemp;
     int noImprovemnt = 0;
 
+    long long allTimeBestCost = currentCost;
+
     while (temperature > MINIMAL_TEMP) {
 
         for (int i=0; i < _stepLenght; i++) {
             // Generate neighbours for whole temperature step
-            tempSol = opt.next();
+            tempSol = opt.next(false);
             if (tempSol == nullptr) {
                 opt.reset();
-                tempSol = opt.next();
+                tempSol = opt.next(false);
             }
+            bool swapBack = true;
 
             *nextSolution = *tempSol;
 
@@ -57,38 +60,46 @@ QPair<long long, QVector<int>> Annealing::run() {
 
             updatedCost = cost.getUpdatedCost(tempSol, opt.getI(), opt.getJ());
 
-            // If neighbour is better than move to it
+            // If neighbour is better then move to it
             if (updatedCost < currentCost) {
+
+                if (updatedCost < allTimeBestCost) allTimeBestCost = updatedCost;
+
                 *_solution = *nextSolution;
                 currentCost = updatedCost;
                 cost.setCost(updatedCost);
-                opt.reset();
+                opt.random();
 
                 noImprovemnt = 0;
                 jumps++;
                 continue;
             }
 
-            // If neighbour is worse than there is a chance to move to it
-            double excitation = exp(-(updatedCost - currentCost)/temperature);
-            if (excitation > ((double) rand() / RAND_MAX)) {
+            // If neighbour is worse then there is a chance to move to it
+            double excitation = exp(-(abs(updatedCost - currentCost))/temperature);
+            if (excitation > ((double) rand() / RAND_MAX)) {              
                 *_solution = *nextSolution;
                 currentCost = updatedCost;
                 cost.setCost(updatedCost);
                 jumps++;
-                opt.reset();
+                opt.random();
+                swapBack = false;
             }
+            // If we did not move to neighbour then swap back
+            if (swapBack) { opt.doSwapBack(); }
 
             // If you reached this code than there was no improvement
             if (++noImprovemnt >= STOP_CONSTANT * _stepLenght) break;
         }
 
         // Early stopping
-        if (noImprovemnt >= STOP_CONSTANT * _stepLenght) break;
+        if (noImprovemnt >= STOP_CONSTANT * _stepLenght) { break; }
 
         // Annealing
         temperature *= ALPHA;
     }
+
+    _AllTimeBestCost = allTimeBestCost;
 
     auto elapsed = t.elapsed();
 
@@ -130,7 +141,7 @@ float Annealing::_scanLandscape() {
         float solutionCost = cost.getCost();
 
         opt.random();
-        auto neighbour = opt.next();
+        auto neighbour = opt.next(false);
         neighbourCost = cost.getUpdatedCost(neighbour, opt.getI(), opt.getJ());
 
         sum += abs(solutionCost - neighbourCost);
@@ -138,3 +149,5 @@ float Annealing::_scanLandscape() {
 
     return sum / LANDSCAPE_SCAN_SIZE;
 }
+
+long long Annealing::getBestCost() { return _AllTimeBestCost; }
