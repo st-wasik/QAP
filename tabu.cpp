@@ -50,13 +50,8 @@ QPair<long long, QVector<int>> Tabu::run(int limit)
 
     while(stepsWithoutBetterSolution < limit)
     {
-//        for(int i=0;i<_tabu.size();++i)
-//            for(int j=i+1;j<_tabu.size();++j)
-//                _tabu[i][j] = std::max(0, _tabu[i][j]-1);
-
         movesCost.clear();
         movesCost.reserve(newton2(nextSolution->count()));
-
 
         while ((tempSol = opt.next()) != nullptr)
         {
@@ -67,24 +62,35 @@ QPair<long long, QVector<int>> Tabu::run(int limit)
 
         std::sort(movesCost.begin(), movesCost.end(), [](QPair<long long, QPair<int,int>> v, QPair<long long, QPair<int,int>> v2){return v.first < v2.first;});
 
-        const auto n = movesCost.size()/10;
+        checkedSols+=movesCost.count();
+
+        const auto n = std::max(1, _inputData->getDimension()/10);
         for(int i=0; i < n; ++i)
         {
             const auto mc = movesCost[i];
-            checkedSols++;
 
             std::swap((*_solution)[mc.second.first], (*_solution)[mc.second.second]);
-//            bool moveAllowed = _tabu[mc.second.first][mc.second.second] == 0;
             bool moveAllowed = !_tabuQueue->contains(*_solution);
                         std::swap((*_solution)[mc.second.first], (*_solution)[mc.second.second]);
 
-            if(moveAllowed || (!moveAllowed && (mc.first + currentCost) < bestCost) || i == (n-1))
+            if(moveAllowed || (!moveAllowed && (mc.first + currentCost) < bestCost))
             {
                 std::swap((*_solution)[mc.second.first], (*_solution)[mc.second.second]);
                 *nextSolution = *_solution;
                 opt.reset();
                 _tabuQueue->append((*_solution));
-//                _tabu[mc.second.first][mc.second.second] = cadency;
+                currentCost = currentCost + mc.first;
+                cost.setCost(currentCost);
+                jumps++;
+                break;
+            }
+            else if(i == (n-1))
+            {
+                const auto mc = movesCost[0];
+                std::swap((*_solution)[mc.second.first], (*_solution)[mc.second.second]);
+                *nextSolution = *_solution;
+                opt.reset();
+                _tabuQueue->append((*_solution));
                 currentCost = currentCost + mc.first;
                 cost.setCost(currentCost);
                 jumps++;

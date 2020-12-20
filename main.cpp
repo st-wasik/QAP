@@ -415,15 +415,15 @@ void main_test()
 //                                   , "cleanedData/wil100.dat2"
 //                                   , "cleanedData/tho150.dat2"
 //                                   , "cleanedData/tai256c.dat2"
-                                   "cleanedData/nug12.dat2"
-                                   , "cleanedData/tai15b.dat2"
-                                   , "cleanedData/bur26f.dat2"
-                                   , "cleanedData/esc32b.dat2"
-                                   , "cleanedData/tho40.dat2"
+//                                   "cleanedData/nug12.dat2"
+//                                   , "cleanedData/tai15b.dat2"
+                                    "cleanedData/bur26f.dat2"
+//                                   , "cleanedData/esc32b.dat2"
+//                                   , "cleanedData/tho40.dat2"
                                    , "cleanedData/tai64c.dat2"
-                                   , "cleanedData/sko72.dat2"
-                                   , "cleanedData/lipa90a.dat2"
-                                   , "cleanedData/tai150b.dat2"
+//                                   , "cleanedData/sko72.dat2"
+//                                   , "cleanedData/lipa90a.dat2"
+//                                   , "cleanedData/tai150b.dat2"
                                    };
 
 //        QVector<int> timesMSec {
@@ -445,17 +445,17 @@ void main_test()
 //        x = "cleanedData2/" + x;
 
     QVector<Algorithm> algorithms {
-//                                    Algorithm::Steepest
-//                                  , Algorithm::Greedy
+                                    Algorithm::Steepest
+                                  , Algorithm::Greedy
 //                                  , Algorithm::Heuristic
 //                                   Algorithm::Random
 //                                  , Algorithm::RandomWalk
-                                    Algorithm::Annealing,
-                                    Algorithm::Tabu
+//                                    Algorithm::Annealing,
+//                                    Algorithm::Tabu
                                   };
 
     constexpr auto timeLimitMSec = 0; // 10 * 1000;
-    constexpr auto minimumRunsCount = 2 * 15;
+    constexpr auto minimumRunsCount = 501;
 //    const auto threadsCount = QThread::idealThreadCount();
     const auto threadsCount = minimumRunsCount;
 
@@ -477,6 +477,13 @@ void main_test()
 
             qDebug() << "----- ----- ----- ----- -----";
             qDebug() << "Running algorithm" << algorithmToString(alg);
+
+            if(alg == Algorithm::Tabu)
+            {
+                constexpr auto P = 7;
+                auto limit = P * newton2(inputData->getDimension());
+                qDebug() << "Current instance tabu limit" << limit;
+            }
 
             int instancesCount = 0;
 
@@ -516,7 +523,7 @@ void main_test()
                         }
 
 //                        algorithm->runAlg(timesMSec[inputDataIndex]);
-                        algorithm->runAlg(100);
+                        algorithm->runAlg(-1);
                         delete algorithm;
 
                         //qDebug() << "Instance" << i << "finished";

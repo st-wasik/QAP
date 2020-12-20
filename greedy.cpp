@@ -73,9 +73,9 @@ QPair<long long, QVector<int>> Greedy::run()
 //    qDebug() << QString(50, '*');
 
     QStringList row;
-//    row << _inputData->getFilename() << "GREEDY" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/ << QString::number(initialCost);
+    row << _inputData->getFilename() << "GREEDY" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/ << QString::number(initialCost) << vectorToString(*_solution);
 
-    row << _inputData->getFilename() << "GREEDY" << QString::number(bestCost) << vectorToString(*_solution);
+//    row << _inputData->getFilename() << "GREEDY" << QString::number(bestCost) << vectorToString(*_solution);
 
     GlobalOutput::getInstance().write(row.join(","));
 

@@ -34,7 +34,7 @@ void GlobalOutput::resetFileContent()
 
     QTextStream fin(&_output);
 
-    fin << "instance,algorithm,cost,time_msec,steps,checked_solutions,initial_cost\n";
+    fin << "instance,algorithm,cost,time_msec,steps,checked_solutions,initial_cost,permutation\n";
 //    fin << "instance,algorithm,step,cost\n";
 //        fin << "instance,algorithm,cost,permutation\n";
 

@@ -79,8 +79,8 @@ QPair<long long, QVector<int> > Steepest::run()
 //    qDebug() << QString(50, '*');
 
     QStringList row;
-//    row << _inputData->getFilename() << "STEEPEST" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/ << QString::number(initialCost);
-    row << _inputData->getFilename() << "STEEPEST" << QString::number(bestCost) << vectorToString(*_solution );
+    row << _inputData->getFilename() << "STEEPEST" << QString::number(bestCost) << QString::number(elapsed) << QString::number(betterFound) /*jumps*/ << QString::number(totalSteps) /*checked solutions*/ << QString::number(initialCost) << vectorToString(*_solution);
+//    row << _inputData->getFilename() << "STEEPEST" << QString::number(bestCost) << vectorToString(*_solution );
 
     GlobalOutput::getInstance().write(row.join(","));
 
