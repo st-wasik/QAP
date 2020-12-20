@@ -3,13 +3,30 @@
   <component name="ChangeListManager">
     <list default="true" id="f822ea41-f879-4df0-b540-1bd4e667c58f" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/New point 5.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/global.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/approx_error-SA-TS.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/approx_error.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/best-SA-TS.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/best.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/checked_solutions-SA-TS.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/checked_solutions.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/efficiency-SA-TS.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/efficiency.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/mean_steps.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/mean_time-SA-TS.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/Checkpoint 3/mean_time.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/approx_error-SA-TS.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/best-SA-TS.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/bur26f_scatter.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/checked_solutions-SA-TS.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/efficiency-SA-TS.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/out/mean_time-SA-TS.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/tai64c_scatter.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/point_6-3 — kopia (2).csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/point_6-3.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/point_6-4.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/point_6-5.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/point_6.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/approx_error.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/approx_error.png" afterDir="false" />
@@ -22,12 +39,14 @@
       <change beforePath="$PROJECT_DIR$/out/nug12_random_to_best_solution.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/point_4_bur26f.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/point_4_sko72.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/similarities.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/similarity_to_optimal.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/similarity_to_optimal_best.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/similarities.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/similarities.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/similarity_to_optimal.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/similarity_to_optimal.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/similarity_to_optimal_best.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/similarity_to_optimal_best.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/tai15b_random_to_best_solution.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/tho40_random_to_best_solution.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/point_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_5.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_5.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/similarities_to_optimal.csv" beforeDir="false" afterPath="$PROJECT_DIR$/similarities_to_optimal.csv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -52,6 +71,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="restartRequiresConfirmation" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -70,7 +90,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.point_2">
+  <component name="RunManager" selected="Python.New point 5">
+    <configuration name="New point 5" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Plotter" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/New point 5.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="point_2" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Plotter" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -105,27 +146,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/point_3.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="point_4" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Plotter" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/point_4.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -178,11 +198,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.point_2" />
+        <item itemvalue="Python.New point 5" />
         <item itemvalue="Python.point_6" />
+        <item itemvalue="Python.point_2" />
         <item itemvalue="Python.point_3" />
         <item itemvalue="Python.point_5" />
-        <item itemvalue="Python.point_4" />
       </list>
     </recent_temporary>
   </component>
@@ -217,6 +237,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/New point 5.py</url>
+          <line>94</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">

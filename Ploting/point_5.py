@@ -121,7 +121,6 @@ def plot_best(results, y_label, name):
     fig.savefig(OUT + name)
     plt.close(fig)
 
-
 if __name__ == '__main__':
     data = pd.read_csv('point_5.csv')
     compare_solutions(data)

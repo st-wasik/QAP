@@ -196,14 +196,14 @@ def plot_without_std(results, y_label, name, out_path, full=True, size=(14, 4), 
            [item[1]['RANDOMWALK'] for item in results.items()], '-o',
            label='Randomwalk')
     ax.plot(x,
-           [item[1]['HEURISTICS'] for item in results.items()], '-o',
-           label='Heuristics')
-    ax.plot(x,
             [item[1]['TABU'] for item in results.items()], '-o',
             label='Tabu')
     ax.plot(x,
             [item[1]['ANNEALING'] for item in results.items()], '-o',
             label='Annealing' )
+    ax.plot(x,
+           [item[1]['HEURISTICS'] for item in results.items()], '-o',
+           label='Heuristics')
 
     ax.set_ylabel(y_label)
     if log:
@@ -218,7 +218,7 @@ def plot_without_std(results, y_label, name, out_path, full=True, size=(14, 4), 
 
 
 if __name__ == '__main__':
-    data = pd.read_csv('point_6-3.csv')
+    data = pd.read_csv('point_6-5.csv')
     data[TIME_MS] = data[TIME_MS].replace(0, 1.2)
 
     point_2(data)
