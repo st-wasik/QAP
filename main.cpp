@@ -329,7 +329,7 @@ void annealingTest(QSharedPointer<const Input> inputData)
     srand(static_cast<quint32>(time(nullptr)));
     randomPermutation(0, rand()); // set seed
 
-    constexpr auto attempts = 100;
+    constexpr auto attempts = 1000;
 
     QMutex mutex;
     auto best = QSharedPointer<Annealing>::create(inputData)->run();
@@ -345,6 +345,7 @@ void annealingTest(QSharedPointer<const Input> inputData)
             auto annealing = QSharedPointer<Annealing>::create(inputData);
             auto result = annealing->run();
 
+            qDebug() << "Best cost visited: " << annealing->getBestCost();
             qDebug() << "Instance" << i << "finished";
 
             QMutexLocker lock(&mutex);
@@ -354,6 +355,7 @@ void annealingTest(QSharedPointer<const Input> inputData)
                 best.second = result.second;
             }
         });
+
     }
 
     for(auto& future : futures)
